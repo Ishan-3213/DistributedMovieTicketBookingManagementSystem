@@ -14,23 +14,23 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     // Outer HashMap initialization 
     HashMap<String, HashMap<String, Integer>> data = new HashMap<>();
 
-    //Inner Avatar Hashmap initialization
+    //Inner Avatar Hashmap initialization....Atwater ?
     HashMap<String, Integer> avatar = new HashMap<>();
     avatar.put("ATWA201222", 50);
-    avatar.put("VERM210123", 150);
-    avatar.put("OUTE2201223", 510);
+    avatar.put("ATWE201222", 150);
+    avatar.put("ATWM201222", 50);
 
-    //Inner Avenger Hashmap initialization
+    //Inner Avenger Hashmap initialization....Vernam ?
     HashMap<String, Integer> avenger = new HashMap<>();
-    avenger.put("ATWM201222", 50);
-    avenger.put("OUTA210123", 150);
-    avenger.put("VERE2201223", 510);
+    avenger.put("VERA2201223", 50);
+    avenger.put("VERM2201223", 150);
+    avenger.put("VERE2201223", 50);
 
-    //Inner Titanic Hashmap initialization
+    //Inner Titanic Hashmap initialization....Out...?
     HashMap<String, Integer> titanic = new HashMap<>();
-    titanic.put("ATWE201222", 50);
-    titanic.put("OUTM210123", 150);
-    titanic.put("VERA2201223", 510);
+    titanic.put("OUTM210123", 50);
+    titanic.put("OUTA210123", 150);
+    titanic.put("OUTE210123", 50);
 
     // Inner Maps added in the main outer Map
     data.put("Avatar", avatar);
@@ -66,6 +66,11 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     @Override
     public String listMovieShowsAvailability(String movieName) {
         // TODO Auto-generated method stub
+        if (data.containsKey(movieName)){
+            System.out.println();
+            System.out.println("Here is the shows available for the movie " + movieName);
+            System.out.println(data.get(movieName));
+        }
         return null;
     }
 
