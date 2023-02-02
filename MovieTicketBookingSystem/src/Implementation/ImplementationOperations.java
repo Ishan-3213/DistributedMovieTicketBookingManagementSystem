@@ -3,39 +3,47 @@ package Implementation;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+import java.util.*;
 import Interface.InterfaceOperations;
-import utils.*;
+//import utils.*;
 
 public class ImplementationOperations extends UnicastRemoteObject implements InterfaceOperations {
-    
+    HashMap<String, HashMap<String, Integer>> data;
+    HashMap<String, Integer> avenger;
+    HashMap<String, Integer> avatar;
+    HashMap<String, Integer> titanic;
+
     public ImplementationOperations() throws RemoteException{
         super();
+        data = new HashMap<>();
+        avenger = new HashMap<>();
+        avenger.put("VERA2201223", 50);
+        avenger.put("VERM2201223", 150);
+        avenger.put("VERE2201223", 50);
+
+        avatar = new HashMap<String,Integer>();
+        avatar.put("ATWA201222", 50);
+        avatar.put("ATWE201222", 150);
+        avatar.put("ATWM201222", 50);
+
+        //Inner Titanic Hashmap initialization....Out...?
+        titanic = new HashMap<>();
+        titanic.put("OUTM210123", 50);
+        titanic.put("OUTA210123", 150);
+        data.put("Avatar" , avatar);
+        data.put("Avenger", avenger);
+        data.put("Titanic", titanic);
+        int value = getValueForKey(data, "Main");
+        System.out.println("Value for mainData: " + value);
     }
     // Outer HashMap initialization 
-    HashMap<String, HashMap<String, Integer>> data = new HashMap<>();
+
 
     //Inner Avatar Hashmap initialization....Atwater ?
-    HashMap<String, Integer> avatar = new HashMap<>();
-    avatar.put("ATWA201222", 50);
-    avatar.put("ATWE201222", 150);
-    avatar.put("ATWM201222", 50);
+
 
     //Inner Avenger Hashmap initialization....Vernam ?
-    HashMap<String, Integer> avenger = new HashMap<>();
-    avenger.put("VERA2201223", 50);
-    avenger.put("VERM2201223", 150);
-    avenger.put("VERE2201223", 50);
 
-    //Inner Titanic Hashmap initialization....Out...?
-    HashMap<String, Integer> titanic = new HashMap<>();
-    titanic.put("OUTM210123", 50);
-    titanic.put("OUTA210123", 150);
-    titanic.put("OUTE210123", 50);
-
-    // Inner Maps added in the main outer Map
-    data.put("Avatar", avatar);
-    data.put("Avenger", avenger);
-    data.put("Titanic", titanic);
     
     @Override
     public String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) {
@@ -86,13 +94,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     }
 
     @Override
-    public String CustomerOrAdmin(String userId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getBookingSchedule(String customerID) {
+    public String cancelMoveTickets(String customerID) {
         // TODO Auto-generated method stub
         return null;
     }
