@@ -6,7 +6,7 @@ package Interface;
  */
 public interface InterfaceOperations {
 
-    String CustomerOrAdmin(String userId);
+    public String cancelMoveTickets(String customerID);
     /**
      * Permission Set - Admin Only.
      * This method add movie for particular movie if exist in hash map

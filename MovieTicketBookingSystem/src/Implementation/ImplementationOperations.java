@@ -8,14 +8,16 @@ import Interface.InterfaceOperations;
 //import utils.*;
 
 public class ImplementationOperations extends UnicastRemoteObject implements InterfaceOperations {
-    HashMap<String, HashMap<String, Integer>> data;
+    HashMap<String, HashMap<String, Integer>> atwater;
+    HashMap<String, HashMap<String, Integer>> vernam;
+    HashMap<String, HashMap<String, Integer>> out___;
     HashMap<String, Integer> avenger;
     HashMap<String, Integer> avatar;
     HashMap<String, Integer> titanic;
 
     public ImplementationOperations() throws RemoteException{
         super();
-        data = new HashMap<>();
+        atwater = new HashMap<>();
         avenger = new HashMap<>();
         avenger.put("VERA2201223", 50);
         avenger.put("VERM2201223", 150);
@@ -30,10 +32,10 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         titanic = new HashMap<>();
         titanic.put("OUTM210123", 50);
         titanic.put("OUTA210123", 150);
-        data.put("Avatar" , avatar);
-        data.put("Avenger", avenger);
-        data.put("Titanic", titanic);
-        int value = getValueForKey(data, "Main");
+        atwater.put("Avatar" , avatar);
+        atwater.put("Avenger", avenger);
+        atwater.put("Titanic", titanic);
+        int value = getValueForKey(atwater, "Main");
         System.out.println("Value for mainData: " + value);
     }
     // Outer HashMap initialization 
@@ -45,16 +47,21 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     //Inner Avenger Hashmap initialization....Vernam ?
 
     
+    private int getValueForKey(HashMap<String, HashMap<String, Integer>> atwater2, String string) {
+        return 0;
+    }
+
+
     @Override
     public String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) {
         // slot should be updated;
-        if (data.get(movieName).containsKey(movieId)) {
-           data.get(movieName).put(movieId, bookingCapacity + data.get(movieName).get(movieId));
+        if (atwater.get(movieName).containsKey(movieId)) {
+           atwater.get(movieName).put(movieId, bookingCapacity + atwater.get(movieName).get(movieId));
            System.out.println();
            System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
            return "Movie Slot Updated";
         }else{
-            data.get(movieName).put(movieId, bookingCapacity);
+            atwater.get(movieName).put(movieId, bookingCapacity);
             System.out.println();
             System.out.println("Movie's slot with the ID " + movieId + " has been added!");
             return "Movie Slot Added";
@@ -64,8 +71,8 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     @Override
     public String removeMovieSlots(String movieId, String movieName) {
         // TODO Auto-generated method stub
-        if (data.get(movieName).containsKey(movieId)){
-            data.remove(movieId);
+        if (atwater.get(movieName).containsKey(movieId)){
+            atwater.remove(movieId);
         }else {
             return "No Movie Slot available for this movie";
         }
@@ -75,10 +82,10 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     @Override
     public String listMovieShowsAvailability(String movieName) {
         // TODO Auto-generated method stub
-        if (data.containsKey(movieName)){
+        if (atwater.containsKey(movieName)){
             System.out.println();
             System.out.println("Here is the shows available for the movie " + movieName);
-            System.out.println(data.get(movieName));
+            System.out.println(atwater.get(movieName));
         }
         return "";
     }
@@ -99,4 +106,5 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         // TODO Auto-generated method stub
         return null;
     }
+
 }
