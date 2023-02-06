@@ -52,12 +52,13 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
            data.get(movieName).put(movieId, bookingCapacity + data.get(movieName).get(movieId));
            System.out.println();
            System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
+           return "Movie Slot Updated";
         }else{
             data.get(movieName).put(movieId, bookingCapacity);
             System.out.println();
             System.out.println("Movie's slot with the ID " + movieId + " has been added!");
+            return "Movie Slot Added";
         }
-        return "Movie Slot Added/Updated";
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         }else {
             return "No Movie Slot available for this movie";
         }
-        return "Slot has been removed for the Movie " + movieName;
+        return "Slot has been removed for the Movie: " + movieName;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
             System.out.println("Here is the shows available for the movie " + movieName);
             System.out.println(data.get(movieName));
         }
-        return null;
+        return "";
     }
 
     @Override
