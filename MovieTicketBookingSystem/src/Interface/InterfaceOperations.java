@@ -1,10 +1,13 @@
 package Interface;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
 /**
  * Operation Interface has method declaration for both admin and
  * user operations on Booking Movie Ticket Facility
  */
-public interface InterfaceOperations {
+public interface InterfaceOperations extends Remote{
 
     public String cancelMoveTickets(String customerID);
     /**
@@ -16,7 +19,7 @@ public interface InterfaceOperations {
      * @param bookingCapacity
      * @return String If operation successful or not
      */
-    String addMovieSlots(String movieId, String movieName, Integer bookingCapacity);
+    String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) throws RemoteException;
 
     /**
      * Permission Set - Admin Only.

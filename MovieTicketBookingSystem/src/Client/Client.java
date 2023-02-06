@@ -1,24 +1,34 @@
 package Client;
 
-import java.rmi.Remote;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
+
 import Interface.InterfaceOperations;
-import Server.Server;
 
 public class Client {
     public static void main(String[] args) {
-        try {
-           Server obj = new Server();
-           InterfaceOperations stub = (InterfaceOperations) UnicastRemoteObject.exportObject((Remote) obj, 0);
-  
-           // Bind the stub in the registry
-           Registry registry = LocateRegistry.getRegistry();
-           registry.rebind("Server1", (Remote) stub);
-  
-           System.out.println("Server 1 ready");
-        } catch (Exception e) {
+      try {
+         // int RMIPort; 
+         // String hostName;
+         // InputStreamReader is = new InputStreamReader(System.in);
+         // BufferedReader br = new BufferedReader(is);
+         // System.out.println("Enter the RMIRegistry host name:");
+         // hostName = br.readLine();
+         // System.out.println("Enter the RMIregistry port number:");
+         // String portNum = br.readLine();
+         // RMIPort = Integer.parseInt(portNum);
+         // String registryURL = "rmi://" + hostName+ ":" + portNum + "/hello"; 
+         Registry registry = LocateRegistry.getRegistry(8001);
+         // find the remote object and cast it to an interface object
+         InterfaceOperations h = (InterfaceOperations)registry.lookup("RegistryTest");
+         System.out.println("Lookup completed " );
+         // invoke the remote method
+         String message = h.addMovieSlots("Donald Duck", "test" , 12);
+         System.out.println("HelloClient: " + message);
+         }catch (Exception e) {
            System.err.println("Server 1 exception: " + e.toString());
            e.printStackTrace();
         }

@@ -3,7 +3,6 @@ package Implementation;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import java.util.*;
 import Interface.InterfaceOperations;
 //import utils.*;
 
@@ -32,11 +31,10 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         titanic = new HashMap<>();
         titanic.put("OUTM210123", 50);
         titanic.put("OUTA210123", 150);
+        titanic.put("OUTE210123", 150);
         atwater.put("Avatar" , avatar);
         atwater.put("Avenger", avenger);
         atwater.put("Titanic", titanic);
-        int value = getValueForKey(atwater, "Main");
-        System.out.println("Value for mainData: " + value);
     }
     // Outer HashMap initialization 
 
@@ -46,26 +44,28 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
     //Inner Avenger Hashmap initialization....Vernam ?
 
-    
-    private int getValueForKey(HashMap<String, HashMap<String, Integer>> atwater2, String string) {
-        return 0;
-    }
 
 
-    @Override
+    //@Override
     public String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) {
         // slot should be updated;
-        if (atwater.get(movieName).containsKey(movieId)) {
-           atwater.get(movieName).put(movieId, bookingCapacity + atwater.get(movieName).get(movieId));
-           System.out.println();
-           System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
-           return "Movie Slot Updated";
-        }else{
-            atwater.get(movieName).put(movieId, bookingCapacity);
+
+        if (atwater.containsKey(movieName)){
+            if(atwater.get(movieName).containsKey(movieId)) {
+            atwater.get(movieName).put(movieId, bookingCapacity + atwater.get(movieName).get(movieId));
             System.out.println();
-            System.out.println("Movie's slot with the ID " + movieId + " has been added!");
-            return "Movie Slot Added";
+            System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
+            return "Movie Slot Updated";
+            }else{
+            // atwater.get(movieName).put(movieId, bookingCapacity);
+                System.out.println();
+                //System.out.println("Movie's slot with the ID " + movieId + " has been added!");
+                return "Movie Slot Added";
+            }
         }
+        return "null";
+        //return "no";
+        // return "Testing";
     }
 
     @Override
