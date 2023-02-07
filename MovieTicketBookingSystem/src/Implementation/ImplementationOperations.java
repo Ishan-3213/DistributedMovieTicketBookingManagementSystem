@@ -1,3 +1,4 @@
+
 package Implementation;
 
 import java.rmi.RemoteException;
@@ -19,16 +20,31 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         datastorage.put("AVATAR", new HashMap<String, Integer>());
         datastorage.put("AVENGER", new HashMap<String, Integer>());
         datastorage.put("TITANIC", new HashMap<String, Integer>());
+
+        user_data.put("AWTC1234", new HashMap<String, Integer>());
+        user_data.put("VERA4321", new HashMap<String, Integer>());
+
         booking_hashmap = new HashMap<String, Integer>();
         customer_booking_hashmap = new HashMap<String, Integer>();
 
-        datastorage.put("AVATAR", booking_hashmap);
+        customer_booking_hashmap = user_data.get("AWTC1234");
+        customer_booking_hashmap.put("ATWA23022023", 5);
+        user_data.put("AWTC1234", customer_booking_hashmap);
 
-        booking_hashmap.put("VERM23022023", 50);
+        customer_booking_hashmap = user_data.get("VERA4321");
+        customer_booking_hashmap.put("VERM23022023", 10);
+        user_data.put("VERA4321", customer_booking_hashmap);
+
+        booking_hashmap = datastorage.get("AVATAR");
+        booking_hashmap.put("OUTA23022023", 100);
+        datastorage.put("AVATAR", booking_hashmap);
+        
+        booking_hashmap = datastorage.get("AVENGER");
         booking_hashmap.put("ATWA23022023", 50);
         datastorage.put("AVENGER", booking_hashmap);
 
-        booking_hashmap.put("OUTM23022023", 50);
+        booking_hashmap = datastorage.get("TITANIC");
+        booking_hashmap.put("VERM23022023", 50);
         datastorage.put("TITANIC", booking_hashmap);
 
     }
@@ -78,9 +94,9 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    public String userData(String customoerID){
     // To initiate the customer hash map for the logged in user.
     System.out.println("test...!!!");
-        user_data.put(customoerID, new HashMap<String, Integer>());
-        System.out.println(user_data);
-        return "Done";
+    user_data.putIfAbsent(customoerID, new HashMap<>());
+    System.out.println(user_data);
+    return "Done";
    }
 //
    @Override
@@ -98,32 +114,51 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 //
    @Override
    public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) {
-       // TODO Auto-generated method stub
-       if (user_data.containsKey(customerID)){
-        if (user_data.get(customerID).containsKey(movieId)){
-            user_data.get(customerID).put(movieId, user_data.get(customerID).get(movieId) + numberOfTickets);
-            return numberOfTickets + " Movie tickets are updated for the movieID " + movieId;
+    
+    if(datastorage.containsKey(movieName)){
+        if(datastorage.get(movieName).containsKey(movieId)){
+            if(datastorage.get(movieName).get(movieId) > numberOfTickets){
+                datastorage.get(movieName).put(movieId, datastorage.get(movieName).get(movieId) - numberOfTickets);
+                // Tickets are available 
+                if (user_data.containsKey(customerID)){
+                    if (user_data.get(customerID).containsKey(movieId) ){
+                        user_data.get(customerID).put(movieId, user_data.get(customerID).get(movieId) + numberOfTickets);
+                        System.out.println(user_data.get(customerID) + " ---- " + customer_booking_hashmap);
+                        return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
+                        // if (customerID.substring(0, 3) == movieId.substring(0, 3)){
+                            // // TO-DO something with that same region thing...!!!
+                            // }
+                        }else{
+                            // add data to the existing cutomer id in hashmap
+                            user_data.get(customerID).put(movieId, numberOfTickets);
+                            return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
+                        }
+                    }else{
+                        // create new customer id in hasmap
+                        customer_booking_hashmap.put(movieId, numberOfTickets);
+                        user_data.put(customerID, customer_booking_hashmap);
+                        return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
+                    }
+                }else{
+                return numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId;
+            }
+        }else{
+            return "No movie found with the ID" + movieId;        
         }
-        else if (user_data.containsKey(customerID)){
-            user_data.get(customerID).put(movieId, numberOfTickets);
-            return numberOfTickets + " Movie tickets are booked for the movieID " + movieId;
+    }else{
+            return "No movie found with the name " + movieName;
+        }
+   }
+
+   @Override
+   public HashMap<String, Integer> getBookingSchedule(String customerID){
+        if(user_data.containsKey(customerID)){
+            return user_data.get(customerID);
         }
         else{
-            customer_booking_hashmap.put(movieId, numberOfTickets);
-            user_data.put(customerID, customer_booking_hashmap);
-            return numberOfTickets + " Movie tickets are booked for the movieID " + movieId;
+            return new HashMap<>();
         }
-       }
-       customer_booking_hashmap.put(movieId, numberOfTickets);
-       user_data.put(customerID, customer_booking_hashmap);
-       System.out.println(user_data.get(customerID) + " ---- " + customer_booking_hashmap);
-       return null;
    }
-//
-//    @Override
-//    public String getBookingSchedule(String customerID){
-//        return null;
-//    }
 //
 //    @Override
 //    public String cancelMoveTickets(String customerID) {

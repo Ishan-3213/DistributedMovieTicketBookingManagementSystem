@@ -57,5 +57,11 @@ public interface InterfaceOperations extends Remote{
    String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) throws RemoteException;
 
 
-//    String getBookingSchedule(String customerID) throws RemoteException;
+   /**
+     * Permission Set - Admin and User.
+     * This method is used tp book movie tickets.
+     * @param customerID
+     * @return String If operation successful or not
+     */
+    HashMap<String, Integer> getBookingSchedule(String customerID) throws RemoteException;
 }

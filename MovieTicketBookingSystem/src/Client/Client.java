@@ -1,8 +1,6 @@
 package Client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -22,56 +20,82 @@ public class Client {
         }
      }
     public static String AvailableOptions(InterfaceOperations intOpr) throws RemoteException{
-        InputStreamReader inpstrm = new InputStreamReader(System.in);
-        BufferedReader read = new BufferedReader(inpstrm);
+        // InputStreamReader inpstrm = new InputStreamReader(System.in);
         int user_choice;
         boolean is_admin;
         String movieName;
         String movieID;
         Integer capacity;
         String user_id;
+        boolean login = true;
         // List<String> movieList = Arrays.asList("AVATAR", "AVENGER", "TITANIC");
-        try {
+        try (Scanner read = new Scanner(System.in);){
             System.out.println();
             System.out.println("Please enter your UserID: ");
-            user_id = (read.readLine()).toUpperCase();
+            user_id = (read.nextLine()).toUpperCase();
             while(user_id.isBlank() | user_id.length()!=8){
                     System.out.println("Please enter valid UserId !!");
-                    user_id = (read.readLine()).toUpperCase();
+                    user_id = (read.nextLine()).toUpperCase();
             }
             System.out.println(user_id);
-        //    intOpr.userData(user_id);
+            intOpr.userData(user_id);
             is_admin = user_id.substring(0,4).endsWith("A") ? (!user_id.substring(0,4).endsWith("C") ? true : false) : false;
             // Customer Options CLI
             if(!is_admin){
                 System.out.println();
                 System.out.println("\t \t Hey there Customer- " + user_id);
-                while (true) {
+                while (login) {
                 System.out.println("Select the choice given below: ");
                 System.out.println();
-                System.out.println("1. List your booked movie tickets.");
-                System.out.println("2. Book movie tickets.");
+                System.out.println("1. Book movie tickets.");
+                System.out.println("2. List your booked movie tickets.");
                 System.out.println("3. Cancel movie tickets. ");
                 System.out.println("4. Exit.");
-                user_choice = read.read();
+                user_choice = Integer.parseInt(read.nextLine()) ;
                 switch (user_choice) {
                     case 1:
-                        // System.out.println("Enter movie name you want to add from the option.");
-                        // System.out.println("AVATAR \t AVENGER \t TITANIC");
-                        // movieName = (read.readLine()).toUpperCase();
-                        // HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
-                        // if(movie_shows.isEmpty()){
-                        //     System.out.println("Sorry there is no show available for " + movieName);
-                        // }
-                        // else{
-                        //     System.out.println("Here is the movie shows available for the "+movieName);
-                        //     System.out.println(movie_shows);
-                        // }
+                        System.out.println("Enter movie name you want to add from the option.");
+                        System.out.println("AVATAR \t AVENGER \t TITANIC");
+                        movieName = (read.nextLine()).toUpperCase();
+                        HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
+                        if(movie_shows.isEmpty()){
+                            System.out.println("Sorry there is no show available for " + movieName);
+                        }
+                        else{
+                            System.out.println("Here is the movie shows available for the "+movieName);
+                            System.out.println(movie_shows);
+                        }
+                        System.out.println();
+                        System.out.println("Enter the movieId you want that you wnat to book.");
+                        movieID = (read.nextLine()).toUpperCase();
+
+                        System.out.println();
+                        System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
+                        capacity = Integer.parseInt(read.nextLine());
+                        String data = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
+                        System.out.println(data);
                         break;
-                    case 2, 3:
+                    case 2:
+                        System.out.println();
+                        System.out.println("Enter UserId: ");
+                        String userId_booking = (read.nextLine()).toUpperCase();
+                        while(userId_booking.isBlank() | userId_booking.length()!=8){
+                            System.out.println("Please enter valid UserId !!");
+                            userId_booking = (read.nextLine()).toUpperCase();
+                        }
+                        HashMap<String, Integer> booking_schedule = intOpr.getBookingSchedule(userId_booking);
+                        if (booking_schedule.isEmpty()){
+                            System.out.println("There is no booked movie tickets found with the ID - " + userId_booking);
+                        }else{
+                        System.out.println("Here is your booking schedule..!!");
+                        System.out.println(booking_schedule);
+                        }
+                        break;
+                    case 3:
                         break;
                     case 4:
-                        return "Leaving...";
+                        login = false;
+                        break;
                     default:
                         System.out.println("Invalid Choice..!!");
                         System.out.println();
@@ -83,7 +107,7 @@ public class Client {
             else if(is_admin){
                 System.out.println();
                 System.out.println("---------------\tHey there Admin("+user_id+") ---------------");
-                while (true) {
+                while (login) {
                     System.out.println("*******\tSelect the choice given below\t*******");
                     System.out.println();
                     String region = user_id.substring(0, 3);
@@ -91,50 +115,50 @@ public class Client {
                     System.out.println("2. Remove movie slots.");
                     System.out.println("3. List out movie shows available.");
                     System.out.println("4. Exit");
-                    user_choice = read.read();
+                    user_choice = Integer.parseInt(read.nextLine());
                     switch (user_choice) {
                         case 1:
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
-                            movieName = (read.readLine()).toUpperCase();
+                            movieName = (read.nextLine()).toUpperCase();
                             // if(movieList.contains(movieName)){
                             //     System.out.println("It does contains...!!!!" + movieList);
                             // }
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
-                            movieID = (read.readLine()).toUpperCase();
+                            movieID = (read.nextLine()).toUpperCase();
                             while(movieID.isBlank() | movieID.length()>10 | movieName.isBlank()){
                                 System.out.println("Please enter valid movie details..!!");
                                 System.out.println();
                                 System.out.println("Enter movie name you want to add from the option.");
                                 System.out.println("AVATAR \t AVENGER \t TITANIC");
-                                movieName = (read.readLine()).toUpperCase();
+                                movieName = (read.nextLine()).toUpperCase();
                                 System.out.println();
                                 System.out.println("Enter movieId for the movie - " + movieName);
-                                movieID = (read.readLine()).toUpperCase();
+                                movieID = (read.nextLine()).toUpperCase();
                               }
                             System.out.println();
                             System.out.println("Enter capacity for the Movie: " + movieName + " with the MovieId: "+ movieID);
-                            capacity = read.read();
+                            capacity = Integer.parseInt(read.nextLine());
                             intOpr.addMovieSlots(movieID, movieName, capacity);
                             System.out.println(movieName + " Movie slot has been updated.");
                             break;
                         case 2:
                             System.out.println("Enter movie name you want to remove from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
-                            movieName = (read.readLine()).toUpperCase();
+                            movieName = (read.nextLine()).toUpperCase();
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
-                            movieID = (read.readLine()).toUpperCase();
+                            movieID = (read.nextLine()).toUpperCase();
                             while(movieID.isBlank() | movieID.length()>10 | movieName.isBlank()){
                                 System.out.println("Please enter valid movie details..!!");
                                 System.out.println();
                                 System.out.println("Enter movie name you want to add from the option.");
                                 System.out.println("AVATAR \t AVENGER \t TITANIC");
-                                movieName = (read.readLine()).toUpperCase();
+                                movieName = (read.nextLine()).toUpperCase();
                                 System.out.println();
                                 System.out.println("Enter movieId for the movie - " + movieName);
-                                movieID = (read.readLine()).toUpperCase();
+                                movieID = (read.nextLine()).toUpperCase();
                               }
                             String data = intOpr.removeMovieSlots(movieID, movieName);
                             System.out.println(data);
@@ -143,12 +167,12 @@ public class Client {
                         System.out.println();
                         System.out.println("Enter movie name you want to add from the option.");
                         System.out.println("\nAVATAR\nAVENGER\nTITANIC");
-                        movieName = (read.readLine()).toUpperCase();
+                        movieName = (read.nextLine()).toUpperCase();
                         while(movieName.isBlank()){
                             System.out.println();
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
-                            movieName = (read.readLine()).toUpperCase();
+                            movieName = (read.nextLine()).toUpperCase();
                           }
                         HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
                         if(movie_shows.isEmpty()){
@@ -163,7 +187,8 @@ public class Client {
                         }
                             break;
                         case 4:
-                            return "Leaving...";
+                            login = false;
+                            break;
                         default:
                             System.out.println();
                             System.out.println("Invalid Choice..!!");
