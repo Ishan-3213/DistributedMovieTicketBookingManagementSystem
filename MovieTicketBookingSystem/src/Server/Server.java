@@ -1,12 +1,7 @@
 package Server;
-import java.rmi.*;
-// import java.rmi.server.*;
 import Implementation.ImplementationOperations;
-import Interface.InterfaceOperations;
-
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.io.*;
 /* This class represents the object server for a distributed object of class 
 Hello, which implements the remote interface HelloInterface. */
 
@@ -16,17 +11,13 @@ public class Server {
         // BufferedReader br = new BufferedReader(is);
         // String portNum;
         try{ 
-            // System.out.println("Enter the RMIregistry port number:");
-            // portNum = (br.readLine()).trim();
-            // int RMIPortNum = Integer.parseInt(portNum);
-            // startRegistry(RMIPortNum);
             int RMIPortNum = 8001;
             LocateRegistry.getRegistry(RMIPortNum);
             Registry registry = LocateRegistry.createRegistry(RMIPortNum);
-            ImplementationOperations exportedObj = new ImplementationOperations();
-            // registryURL = "rmi://localhost:" + portNum + "/hello";
-            registry.rebind("RegistryTest", exportedObj);
-            System.out.println("Hello Server ready."+registry);
+            ImplementationOperations impobj = new ImplementationOperations();
+            registry.rebind("RegistryTest", impobj);
+            System.out.println("Server is started.");
+
         }catch (Exception re) {
             System.out.println("Exception in HelloServer.main: " + re);
         }

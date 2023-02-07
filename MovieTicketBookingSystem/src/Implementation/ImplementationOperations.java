@@ -1,5 +1,6 @@
 package Implementation;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -7,104 +8,98 @@ import Interface.InterfaceOperations;
 //import utils.*;
 
 public class ImplementationOperations extends UnicastRemoteObject implements InterfaceOperations {
-    HashMap<String, HashMap<String, Integer>> atwater;
-    HashMap<String, HashMap<String, Integer>> vernam;
-    HashMap<String, HashMap<String, Integer>> out___;
-    HashMap<String, Integer> avenger;
-    HashMap<String, Integer> avatar;
-    HashMap<String, Integer> titanic;
+    HashMap<String, HashMap<String, Integer>> data_hashmap;
+    HashMap<String, Integer> booking_hashmap;
 
-    public ImplementationOperations() throws RemoteException{
+    // HashMap<String, HashMap<String, Integer>> vernam;
+
+    public ImplementationOperations() throws RemoteException {
         super();
-        atwater = new HashMap<>();
-        avenger = new HashMap<>();
-        avenger.put("VERA2201223", 50);
-        avenger.put("VERM2201223", 150);
-        avenger.put("VERE2201223", 50);
+        data_hashmap = new HashMap<>();
+        data_hashmap.put("AVATAR", new HashMap<String, Integer>());
+        data_hashmap.put("AVENGER", new HashMap<String, Integer>());
+        data_hashmap.put("TITANIC", new HashMap<String, Integer>());
+        booking_hashmap = new HashMap<String, Integer>();
+        // avenger.put("VERA2201223", 50);
 
-        avatar = new HashMap<String,Integer>();
-        avatar.put("ATWA201222", 50);
-        avatar.put("ATWE201222", 150);
-        avatar.put("ATWM201222", 50);
+        // avatar.put("ATWA201222", 50);
 
-        //Inner Titanic Hashmap initialization....Out...?
-        titanic = new HashMap<>();
-        titanic.put("OUTM210123", 50);
-        titanic.put("OUTA210123", 150);
-        titanic.put("OUTE210123", 150);
-        atwater.put("Avatar" , avatar);
-        atwater.put("Avenger", avenger);
-        atwater.put("Titanic", titanic);
+        // //Inner Titanic Hashmap initialization....Out...?
+        // titanic = new HashMap<>();
+        // titanic.put("OUTM210123", 50);
+        // atwater.put("Titanic", titanic);
     }
-    // Outer HashMap initialization 
 
-
-    //Inner Avatar Hashmap initialization....Atwater ?
-
-
-    //Inner Avenger Hashmap initialization....Vernam ?
-
-
-
-    //@Override
+    @Override
     public String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) {
         // slot should be updated;
+        try {
+            if (data_hashmap.containsKey(movieName)){
+                if (data_hashmap.get(movieName).containsKey(movieId)) {
+                    data_hashmap.get(movieName).put(movieId, bookingCapacity + data_hashmap.get(movieName).get(movieId));
+                    System.out.println();
+                    System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
+                    System.out.println("Movie slot has been added..!!" + data_hashmap);
+                    return "Movie slot updated.";
+                }else {
+                    data_hashmap.get(movieName).put(movieId, bookingCapacity);
+                    System.out.println("data-->>" + data_hashmap);
+                    return "Movie slot added.";
+                }
 
-        if (atwater.containsKey(movieName)){
-            if(atwater.get(movieName).containsKey(movieId)) {
-            atwater.get(movieName).put(movieId, bookingCapacity + atwater.get(movieName).get(movieId));
-            System.out.println();
-            System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
-            return "Movie Slot Updated";
-            }else{
-            // atwater.get(movieName).put(movieId, bookingCapacity);
-                System.out.println();
-                //System.out.println("Movie's slot with the ID " + movieId + " has been added!");
-                return "Movie Slot Added";
+            } else {
+                System.out.println("Movie is not there..!!");
+                booking_hashmap.put(movieId, bookingCapacity);
+                data_hashmap.put(movieName, booking_hashmap);
+                System.out.println("Movie slot has been added..!!" + data_hashmap);
+                return "Movie slot has been added..!!";
             }
-        }
-        return "null";
-        //return "no";
-        // return "Testing";
-    }
 
-    @Override
-    public String removeMovieSlots(String movieId, String movieName) {
-        // TODO Auto-generated method stub
-        if (atwater.get(movieName).containsKey(movieId)){
-            atwater.remove(movieId);
-        }else {
-            return "No Movie Slot available for this movie";
-        }
-        return "Slot has been removed for the Movie: " + movieName;
+        } catch (Exception e) {
+        throw new RuntimeException(e);
     }
-
-    @Override
-    public String listMovieShowsAvailability(String movieName) {
-        // TODO Auto-generated method stub
-        if (atwater.containsKey(movieName)){
-            System.out.println();
-            System.out.println("Here is the shows available for the movie " + movieName);
-            System.out.println(atwater.get(movieName));
-        }
-        return "";
+//            else{
+            // atwater.get(movieName).put(movieId, bookingCapacity);
+//                System.out.println();
+            //System.out.println("Movie's slot with the ID " + movieId + " has been added!");
+//        return "No slots a";
     }
-
-    @Override
-    public String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets) {
-        // TODO Auto-generated method stub
-        return null;
+//    @Override
+//    public String removeMovieSlots(String movieId, String movieName) {
+//        // TODO Auto-generated method stub
+//        if (atwater.get(movieName).containsKey(movieId)){
+//            atwater.remove(movieId);
+//        }else {
+//            return "No Movie Slot available for this movie";
+//        }
+//        return "Slot has been removed for the Movie: " + movieName;
+//    }
+//
+//    @Override
+//    public String listMovieShowsAvailability(String movieName) {
+//        // TODO Auto-generated method stub
+//        if (atwater.containsKey(movieName)){
+//            System.out.println();
+//            System.out.println("Here is the shows available for the movie " + movieName);
+//            System.out.println(atwater.get(movieName));
+//        }
+//        return "";
+//    }
+//
+//    @Override
+//    public String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public String getBookingSchedule(String customerID){
+//        return null;
+//    }
+//
+//    @Override
+//    public String cancelMoveTickets(String customerID) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
     }
-
-    @Override
-    public String getBookingSchedule(String customerID){
-        return null;
-    }
-
-    @Override
-    public String cancelMoveTickets(String customerID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-}

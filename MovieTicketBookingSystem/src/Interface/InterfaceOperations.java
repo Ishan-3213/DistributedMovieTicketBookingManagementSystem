@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  */
 public interface InterfaceOperations extends Remote{
 
-    public String cancelMoveTickets(String customerID);
+//    public String cancelMoveTickets(String customerID);
     /**
      * Permission Set - Admin Only.
      * This method add movie for particular movie if exist in hash map
@@ -30,7 +30,7 @@ public interface InterfaceOperations extends Remote{
      * @param movieName
      * @return String If operation successful or not
      */
-    String removeMovieSlots(String movieId, String movieName);
+//    String removeMovieSlots(String movieId, String movieName);
 
     /**
      * Permission Set - Admin Only.
@@ -38,7 +38,7 @@ public interface InterfaceOperations extends Remote{
      * @param movieName
      * @return String If operation successful or not
      */
-    String listMovieShowsAvailability(String movieName);
+//    String listMovieShowsAvailability(String movieName);
 
     /**
      * Permission Set - Admin and User.
@@ -49,8 +49,8 @@ public interface InterfaceOperations extends Remote{
      * @param numberOfTickets
      * @return String If operation successful or not
      */
-    String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets);
+//    String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets);
 
 
-    String getBookingSchedule(String customerID);
+//    String getBookingSchedule(String customerID);
 }
