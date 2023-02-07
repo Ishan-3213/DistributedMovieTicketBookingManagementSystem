@@ -39,14 +39,13 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                     data_hashmap.get(movieName).put(movieId, bookingCapacity + data_hashmap.get(movieName).get(movieId));
                     System.out.println();
                     System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
-                    System.out.println("Movie slot has been added..!!" + data_hashmap);
+                    System.out.println(data_hashmap);
                     return "Movie slot updated.";
-                }else {
+                }else{
                     data_hashmap.get(movieName).put(movieId, bookingCapacity);
                     System.out.println("data-->>" + data_hashmap);
                     return "Movie slot added.";
                 }
-
             } else {
                 System.out.println("Movie is not there..!!");
                 booking_hashmap.put(movieId, bookingCapacity);

@@ -24,9 +24,9 @@ public class Client {
      }
     // switch case to create the values
     public static String AvailableOptions(InterfaceOperations intOpr) throws RemoteException{
-        try (Scanner read = new Scanner(System.in)) {
-            InputStreamReader is = new InputStreamReader(System.in);
-            BufferedReader br = new BufferedReader(is);
+        InputStreamReader inpstrm = new InputStreamReader(System.in);
+        BufferedReader read = new BufferedReader(inpstrm);
+        try {
             while (true) {
                 System.out.println();
                 System.out.println("Select the choice given below: ");
@@ -34,18 +34,18 @@ public class Client {
                 System.out.println("1. Add movie slots...");
                 System.out.println("2. Remove movie slots...");
                 System.out.println("3. Exit");
-                int user_choice = Integer.parseInt(read.nextLine());
+                int user_choice = Integer.parseInt(read.readLine());
                 switch (user_choice) {
                     case 1:
                         System.out.println("Enter movie name you want to add from the option.");
                         System.out.println("AVATAR \t AVENGER \t TITANIC");
-                        String movieName = (br.readLine()).toUpperCase();
+                        String movieName = (read.readLine()).toUpperCase();
                         System.out.println();
                         System.out.println("Enter movieId for the movie - " + movieName);
-                        String movie_id = (br.readLine()).toUpperCase();
+                        String movie_id = (read.readLine()).toUpperCase();
                         System.out.println();
                         System.out.println("Enter capacity for the Movie: " + movieName + " with the MovieId: "+ movie_id);
-                        int capacity = Integer.parseInt(read.nextLine());
+                        int capacity = Integer.parseInt(read.readLine());
                         intOpr.addMovieSlots(movie_id, movieName, capacity);
                         System.out.println(movieName + " Movie slot has been updated.");
                         break;
