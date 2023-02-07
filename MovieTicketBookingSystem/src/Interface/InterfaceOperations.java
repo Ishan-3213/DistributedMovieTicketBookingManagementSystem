@@ -54,7 +54,7 @@ public interface InterfaceOperations extends Remote{
      * @param numberOfTickets
      * @return String If operation successful or not
      */
-//    String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets) throws RemoteException;
+   String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) throws RemoteException;
 
 
 //    String getBookingSchedule(String customerID) throws RemoteException;

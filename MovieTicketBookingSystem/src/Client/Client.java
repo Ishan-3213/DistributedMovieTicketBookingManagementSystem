@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
+import java.util.*;
 
 import Interface.InterfaceOperations;
 public class Client {
@@ -29,6 +30,7 @@ public class Client {
         String movieID;
         Integer capacity;
         String user_id;
+        // List<String> movieList = Arrays.asList("AVATAR", "AVENGER", "TITANIC");
         try {
             System.out.println();
             System.out.println("Please enter your UserID: ");
@@ -89,22 +91,31 @@ public class Client {
                     System.out.println("2. Remove movie slots.");
                     System.out.println("3. List out movie shows available.");
                     System.out.println("4. Exit");
-                    user_choice = Integer.parseInt(read.readLine());
+                    user_choice = read.read();
                     switch (user_choice) {
                         case 1:
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.readLine()).toUpperCase();
+                            // if(movieList.contains(movieName)){
+                            //     System.out.println("It does contains...!!!!" + movieList);
+                            // }
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.readLine()).toUpperCase();
-                            while(movieID.isBlank() | movieID.length()>10){
-                                System.out.println("Please enter valid movieId..!!");
+                            while(movieID.isBlank() | movieID.length()>10 | movieName.isBlank()){
+                                System.out.println("Please enter valid movie details..!!");
+                                System.out.println();
+                                System.out.println("Enter movie name you want to add from the option.");
+                                System.out.println("AVATAR \t AVENGER \t TITANIC");
+                                movieName = (read.readLine()).toUpperCase();
+                                System.out.println();
+                                System.out.println("Enter movieId for the movie - " + movieName);
                                 movieID = (read.readLine()).toUpperCase();
                               }
                             System.out.println();
                             System.out.println("Enter capacity for the Movie: " + movieName + " with the MovieId: "+ movieID);
-                            capacity = Integer.parseInt(read.readLine());
+                            capacity = read.read();
                             intOpr.addMovieSlots(movieID, movieName, capacity);
                             System.out.println(movieName + " Movie slot has been updated.");
                             break;
@@ -115,18 +126,38 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.readLine()).toUpperCase();
+                            while(movieID.isBlank() | movieID.length()>10 | movieName.isBlank()){
+                                System.out.println("Please enter valid movie details..!!");
+                                System.out.println();
+                                System.out.println("Enter movie name you want to add from the option.");
+                                System.out.println("AVATAR \t AVENGER \t TITANIC");
+                                movieName = (read.readLine()).toUpperCase();
+                                System.out.println();
+                                System.out.println("Enter movieId for the movie - " + movieName);
+                                movieID = (read.readLine()).toUpperCase();
+                              }
                             String data = intOpr.removeMovieSlots(movieID, movieName);
                             System.out.println(data);
                             break;
                         case 3:
+                        System.out.println();
                         System.out.println("Enter movie name you want to add from the option.");
-                        System.out.println("AVATAR \t AVENGER \t TITANIC");
+                        System.out.println("\nAVATAR\nAVENGER\nTITANIC");
                         movieName = (read.readLine()).toUpperCase();
+                        while(movieName.isBlank()){
+                            System.out.println();
+                            System.out.println("Enter movie name you want to add from the option.");
+                            System.out.println("AVATAR \t AVENGER \t TITANIC");
+                            movieName = (read.readLine()).toUpperCase();
+                          }
                         HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
                         if(movie_shows.isEmpty()){
-                            System.out.println("Sorry there is no show available for " + movieName);
+                            System.out.println();
+                            System.out.println("Sorry there is no show available for-> " + movieName);
+                            System.out.println();
                         }
                         else{
+                            System.out.println();
                             System.out.println("Here is the movie shows available for the "+movieName);
                             System.out.println(movie_shows);
                         }
