@@ -2,6 +2,7 @@ package Interface;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 /**
  * Operation Interface has method declaration for both admin and
@@ -9,7 +10,11 @@ import java.rmi.RemoteException;
  */
 public interface InterfaceOperations extends Remote{
 
-//    public String cancelMoveTickets(String customerID);
+
+    String userData(String customerID) throws RemoteException;
+
+
+//    String cancelMoveTickets(String customerID);
     /**
      * Permission Set - Admin Only.
      * This method add movie for particular movie if exist in hash map
@@ -38,7 +43,7 @@ public interface InterfaceOperations extends Remote{
      * @param movieName
      * @return String If operation successful or not
      */
-//    String listMovieShowsAvailability(String movieName) throws RemoteException;
+   HashMap<String, Integer> listMovieShowsAvailability(String movieName) throws RemoteException;
 
     /**
      * Permission Set - Admin and User.
