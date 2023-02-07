@@ -30,7 +30,7 @@ public interface InterfaceOperations extends Remote{
      * @param movieName
      * @return String If operation successful or not
      */
-//    String removeMovieSlots(String movieId, String movieName);
+   String removeMovieSlots(String movieId, String movieName) throws RemoteException;
 
     /**
      * Permission Set - Admin Only.
@@ -38,7 +38,7 @@ public interface InterfaceOperations extends Remote{
      * @param movieName
      * @return String If operation successful or not
      */
-//    String listMovieShowsAvailability(String movieName);
+//    String listMovieShowsAvailability(String movieName) throws RemoteException;
 
     /**
      * Permission Set - Admin and User.
@@ -49,8 +49,8 @@ public interface InterfaceOperations extends Remote{
      * @param numberOfTickets
      * @return String If operation successful or not
      */
-//    String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets);
+//    String bookMovieTickets(String customerID, String movieId, String movieName, String numberOfTickets) throws RemoteException;
 
 
-//    String getBookingSchedule(String customerID);
+//    String getBookingSchedule(String customerID) throws RemoteException;
 }

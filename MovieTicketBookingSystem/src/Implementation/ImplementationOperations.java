@@ -63,16 +63,20 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
             //System.out.println("Movie's slot with the ID " + movieId + " has been added!");
 //        return "No slots a";
     }
-//    @Override
-//    public String removeMovieSlots(String movieId, String movieName) {
-//        // TODO Auto-generated method stub
-//        if (atwater.get(movieName).containsKey(movieId)){
-//            atwater.remove(movieId);
-//        }else {
-//            return "No Movie Slot available for this movie";
-//        }
-//        return "Slot has been removed for the Movie: " + movieName;
-//    }
+   @Override
+   public String removeMovieSlots(String movieId, String movieName) {
+       // TODO Auto-generated method stub
+       if (data_hashmap.get(movieName).containsKey(movieId)){
+           System.out.println(data_hashmap.get(movieName) +" befor removal..!! ");
+           System.out.println();
+           data_hashmap.get(movieName).remove(movieId);
+           System.out.println(data_hashmap.get(movieName) +" after removal..!! ");
+           return "Movie slot for " + movieName + " has been removed";
+       }else {
+        System.out.println("there is no movei slot for this movie..!!!");
+        return "No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region";
+       }
+   }
 //
 //    @Override
 //    public String listMovieShowsAvailability(String movieName) {

@@ -16,7 +16,7 @@ public class Server {
             Registry registry = LocateRegistry.createRegistry(RMIPortNum);
             ImplementationOperations impobj = new ImplementationOperations();
             registry.rebind("RegistryTest", impobj);
-            System.out.println("Server is started.");
+            System.out.println("Server is started at the PORT- "+ RMIPortNum);
 
         }catch (Exception re) {
             System.out.println("Exception in HelloServer.main: " + re);
