@@ -137,7 +137,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                     }else{
                         // add data to the existing cutomer id in hashmap
                         user_data.get(customerID).put(movie_string, numberOfTickets);
-                        System.out.println(user_data.get(customerID) + " --last Else-- " + customer_booking_hashmap);
+                        System.out.println("Customer-ID"+ customerID + " ---" + user_data.get(customerID) + " --last Else-- " + customer_booking_hashmap);
                         return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
                     }
                 }else{

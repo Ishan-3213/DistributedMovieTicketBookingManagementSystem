@@ -171,7 +171,7 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
-                            while(movieID.isBlank() | movieID.length()>10 | movieName.isBlank()){
+                            while(movieID.isBlank() | movieID.length()<11 | movieName.isBlank()){
                                 System.out.println("Please enter valid movie details..!!");
                                 System.out.println();
                                 System.out.println("Enter movie name you want to add from the option.");
@@ -194,7 +194,7 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
-                            while(movieID.isBlank() | movieID.length()>10 | movieName.isBlank()){
+                            while(movieID.isBlank() | movieID.length() > 11 | movieName.isBlank()){
                                 System.out.println("Please enter valid movie details..!!");
                                 System.out.println();
                                 System.out.println("Enter movie name you want to add from the option.");
@@ -231,6 +231,13 @@ public class Client {
                             }
                             break;
                         case 4:
+                            System.out.println();
+                            System.out.println("Enter UserId: ");
+                            String user_booking_id = (read.nextLine()).toUpperCase();
+                            while(user_booking_id.isBlank() | user_booking_id.length()!=8){
+                                System.out.println("Please enter valid UserId !!");
+                                user_booking_id = (read.nextLine()).toUpperCase();
+                            }
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
@@ -249,7 +256,7 @@ public class Client {
                             System.out.println();
                             System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
                             capacity = Integer.parseInt(read.nextLine());
-                            String reply = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
+                            String reply = intOpr.bookMovieTickets(user_booking_id, movieID, movieName, capacity);
                             System.out.println(reply);
                             break;
                         case 5:
@@ -272,18 +279,18 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter UserId: ");
                             String userId_cancel = (read.nextLine()).toUpperCase();
-                            while(userId_cancel.isBlank() | userId_cancel.length()!=8){
+                            while(userId_cancel.isBlank() | userId_cancel.length() > 8){
                                 System.out.println("Please enter valid UserId !!");
                                 userId_cancel = (read.nextLine()).toUpperCase();
                             }
-                            while(user_id != userId_cancel){
-                                System.out.println("Please enter valid UserId !!");
-                                userId_cancel = (read.nextLine()).toUpperCase();
-                            }
+                            // while(user_id != userId_cancel){
+                            //     System.out.println("Please enter not maching .. !!");
+                            //     userId_cancel = (read.nextLine()).toUpperCase();
+                            // }
                             System.out.println("Enter movie name you want to cancel from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
-                            HashMap<String, Integer> booked_movie =intOpr.getBookingSchedule(user_id);
+                            HashMap<String, Integer> booked_movie =intOpr.getBookingSchedule(userId_cancel);
                             if(booked_movie.isEmpty()){
                                 System.out.println("There is no booked movie tickets found with the ID -" + user_id);
                                 break;
