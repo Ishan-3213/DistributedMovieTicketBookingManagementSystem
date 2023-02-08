@@ -23,17 +23,22 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
         user_data.put("AWTC1234", new HashMap<String, Integer>());
         user_data.put("VERA4321", new HashMap<String, Integer>());
+        user_data.put("OUTA4321", new HashMap<String, Integer>());
 
         booking_hashmap = new HashMap<String, Integer>();
         customer_booking_hashmap = new HashMap<String, Integer>();
 
         customer_booking_hashmap = user_data.get("AWTC1234");
-        customer_booking_hashmap.put("ATWA23022023", 5);
+        customer_booking_hashmap.put("AVATAR-ATWA23022023", 5);
         user_data.put("AWTC1234", customer_booking_hashmap);
 
         customer_booking_hashmap = user_data.get("VERA4321");
-        customer_booking_hashmap.put("VERM23022023", 10);
+        customer_booking_hashmap.put("TITANIC-VERM23022023", 10);
         user_data.put("VERA4321", customer_booking_hashmap);
+        
+        customer_booking_hashmap = user_data.get("OUTA4321");
+        customer_booking_hashmap.put("AVENGER-OUTM23022023", 10);
+        user_data.put("OUTA4321", customer_booking_hashmap);
 
         booking_hashmap = datastorage.get("AVATAR");
         booking_hashmap.put("OUTA23022023", 100);
@@ -93,7 +98,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    @Override
    public String userData(String customoerID){
     // To initiate the customer hash map for the logged in user.
-    System.out.println("test...!!!");
+    System.out.println("User hashmap initiated!");
     user_data.putIfAbsent(customoerID, new HashMap<>());
     System.out.println(user_data);
     return "Done";
@@ -120,27 +125,30 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
             if(datastorage.get(movieName).get(movieId) > numberOfTickets){
                 datastorage.get(movieName).put(movieId, datastorage.get(movieName).get(movieId) - numberOfTickets);
                 // Tickets are available 
+                String movie_string = movieName + "-" + movieId;
                 if (user_data.containsKey(customerID)){
-                    if (user_data.get(customerID).containsKey(movieId) ){
-                        user_data.get(customerID).put(movieId, user_data.get(customerID).get(movieId) + numberOfTickets);
-                        System.out.println(user_data.get(customerID) + " ---- " + customer_booking_hashmap);
+                    if (user_data.get(customerID).containsKey(movie_string) ){
+                        user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) + numberOfTickets);
+                        System.out.println(user_data.get(customerID) + " --LastIf-- " + customer_booking_hashmap);
                         return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
                         // if (customerID.substring(0, 3) == movieId.substring(0, 3)){
                             // // TO-DO something with that same region thing...!!!
                             // }
-                        }else{
-                            // add data to the existing cutomer id in hashmap
-                            user_data.get(customerID).put(movieId, numberOfTickets);
-                            return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
-                        }
                     }else{
-                        // create new customer id in hasmap
-                        customer_booking_hashmap.put(movieId, numberOfTickets);
-                        user_data.put(customerID, customer_booking_hashmap);
+                        // add data to the existing cutomer id in hashmap
+                        user_data.get(customerID).put(movie_string, numberOfTickets);
+                        System.out.println(user_data.get(customerID) + " --last Else-- " + customer_booking_hashmap);
                         return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
                     }
                 }else{
-                return numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId;
+                    // create new customer id in hasmap
+                    customer_booking_hashmap.put(movie_string, numberOfTickets);
+                    user_data.put(customerID, customer_booking_hashmap);
+                    System.out.println(user_data.get(customerID) + " --second last else-- " + customer_booking_hashmap);
+                    return numberOfTickets + "tickets booked for the movie " + movieName + "-" + movieId;
+                }
+            }else{
+            return numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId;
             }
         }else{
             return "No movie found with the ID" + movieId;        
@@ -164,15 +172,16 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    public String cancelMovieTickets(String customerID, String movieID, String movieName, Integer numberOfTickets){
 
         if(user_data.containsKey(customerID)){
-            if(user_data.get(customerID).containsKey(movieID)){
-                if(user_data.get(customerID).get(movieID) < numberOfTickets){
-                    user_data.get(customerID).put(movieID, user_data.get(customerID).get(movieID) - numberOfTickets);
+            String movie_string = movieName + "-" + movieID;
+            if(user_data.get(customerID).containsKey(movie_string)){
+                if(user_data.get(customerID).get(movie_string) < numberOfTickets){
+                    user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) - numberOfTickets);
                     datastorage.get(movieName).put(movieID, datastorage.get(movieName).get(movieID) + numberOfTickets);
                     return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
                 }
                 else{
                     datastorage.get(movieName).put(movieID, user_data.get(customerID).get(movieID));
-                    user_data.get(customerID).remove(movieID);
+                    user_data.get(customerID).remove(movie_string);
                     return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
                 }
             }else{

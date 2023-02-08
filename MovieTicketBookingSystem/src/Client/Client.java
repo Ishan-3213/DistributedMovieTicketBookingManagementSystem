@@ -20,7 +20,6 @@ public class Client {
         }
      }
     public static String AvailableOptions(InterfaceOperations intOpr) throws RemoteException{
-        // InputStreamReader inpstrm = new InputStreamReader(System.in);
         int user_choice;
         boolean is_admin;
         String movieName;
@@ -43,7 +42,7 @@ public class Client {
             // Customer Options CLI
             if(!is_admin){
                 System.out.println();
-                System.out.println("\t \t Hey there Customer- " + user_id);
+                System.out.println("\t \t Hey there Customer - " + user_id);
                 while (login) {
                 System.out.println("Select the choice given below: ");
                 System.out.println();
@@ -62,7 +61,7 @@ public class Client {
                             System.out.println("Sorry there is no show available for " + movieName);
                         }
                         else{
-                            System.out.println("Here is the movie shows available for the "+movieName);
+                            System.out.println("Here is the movie shows available for "+movieName);
                             System.out.println(movie_shows);
                         }
                         System.out.println();
@@ -93,7 +92,6 @@ public class Client {
                         break;
                     case 3:
                         System.out.println();
-                        System.out.println();
                         System.out.println("Enter UserId: ");
                         String userId_cancel = (read.nextLine()).toUpperCase();
                         while(userId_cancel.isBlank() | userId_cancel.length()!=8){
@@ -103,7 +101,6 @@ public class Client {
                         while(user_id != userId_cancel){
                             System.out.println("Please enter valid UserId !!");
                             userId_cancel = (read.nextLine()).toUpperCase();
-
                         }
                         System.out.println("Enter movie name you want to cancel from the option.");
                         System.out.println("AVATAR \t AVENGER \t TITANIC");
@@ -114,8 +111,19 @@ public class Client {
                             break;
                         }
                         else{
-                            System.out.println("Here is the booked shows with the userID "+user_id);
-                            System.out.println(booked_movie);
+                            System.out.println();
+                            booked_movie.get(userId_cancel);
+                            System.out.println("Here is the booked shows with the userID - "+user_id);
+                            for (String innerKey : booked_movie.keySet()) {
+                                System.out.println("Inner Key: " + innerKey);
+                                String[] split_value = innerKey.split("-");
+                                if (split_value[0] == movieName){
+                                    System.out.println(split_value[1] + "-" + booked_movie.get(innerKey));
+                                }else{
+                                    System.out.println();
+                                    System.out.println("No tickets found for " + movieName);
+                                }
+                            }
                         }
                         System.out.println();
                         System.out.println("Enter the movieId you want to cancel.");
@@ -125,9 +133,7 @@ public class Client {
                         capacity = Integer.parseInt(read.nextLine());
                         String reply = intOpr.cancelMovieTickets(user_id, movieID, movieName, capacity);
                         System.out.println(reply);
-                    
                         break;
-                    
                     case 4:
                         login = false;
                         break;
@@ -149,7 +155,10 @@ public class Client {
                     System.out.println("1. Add movie slots in " + region);
                     System.out.println("2. Remove movie slots.");
                     System.out.println("3. List out movie shows available.");
-                    System.out.println("4. Exit");
+                    System.out.println("4. Book movie tickets.");
+                    System.out.println("5. List your booked movie tickets.");
+                    System.out.println("6. Cancel movie tickets. ");    
+                    System.out.println("7. Exit");
                     user_choice = Integer.parseInt(read.nextLine());
                     switch (user_choice) {
                         case 1:
@@ -175,8 +184,8 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter capacity for the Movie: " + movieName + " with the MovieId: "+ movieID);
                             capacity = Integer.parseInt(read.nextLine());
-                            intOpr.addMovieSlots(movieID, movieName, capacity);
-                            System.out.println(movieName + " Movie slot has been updated.");
+                            String response = intOpr.addMovieSlots(movieID, movieName, capacity);
+                            System.out.println(response);
                             break;
                         case 2:
                             System.out.println("Enter movie name you want to remove from the option.");
