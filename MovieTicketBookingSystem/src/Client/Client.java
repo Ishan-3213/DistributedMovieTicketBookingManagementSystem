@@ -208,34 +208,116 @@ public class Client {
                             System.out.println(data);
                             break;
                         case 3:
-                        System.out.println();
-                        System.out.println("Enter movie name you want to add from the option.");
-                        System.out.println("\nAVATAR\nAVENGER\nTITANIC");
-                        movieName = (read.nextLine()).toUpperCase();
-                        while(movieName.isBlank()){
                             System.out.println();
+                            System.out.println("Enter movie name you want to add from the option.");
+                            System.out.println("\nAVATAR\nAVENGER\nTITANIC");
+                            movieName = (read.nextLine()).toUpperCase();
+                            while(movieName.isBlank()){
+                                System.out.println();
+                                System.out.println("Enter movie name you want to add from the option.");
+                                System.out.println("AVATAR \t AVENGER \t TITANIC");
+                                movieName = (read.nextLine()).toUpperCase();
+                            }
+                            HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
+                            if(movie_shows.isEmpty()){
+                                System.out.println();
+                                System.out.println("Sorry there is no show available for-> " + movieName);
+                                System.out.println();
+                            }
+                            else{
+                                System.out.println();
+                                System.out.println("Here is the movie shows available for the "+movieName);
+                                System.out.println(movie_shows);
+                            }
+                            break;
+                        case 4:
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
-                          }
-                        HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
-                        if(movie_shows.isEmpty()){
+                            HashMap<String, Integer> list_movie_shows =intOpr.listMovieShowsAvailability(movieName);
+                            if(list_movie_shows.isEmpty()){
+                                System.out.println("Sorry there is no show available for " + movieName);
+                            }
+                            else{
+                                System.out.println("Here is the movie shows available for "+movieName);
+                                System.out.println(list_movie_shows);
+                            }
                             System.out.println();
-                            System.out.println("Sorry there is no show available for-> " + movieName);
+                            System.out.println("Enter the movieId you want to book.");
+                            movieID = (read.nextLine()).toUpperCase();
+    
                             System.out.println();
-                        }
-                        else{
-                            System.out.println();
-                            System.out.println("Here is the movie shows available for the "+movieName);
-                            System.out.println(movie_shows);
-                        }
+                            System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
+                            capacity = Integer.parseInt(read.nextLine());
+                            String reply = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
+                            System.out.println(reply);
                             break;
-                        case 4:
+                        case 5:
+                            System.out.println();
+                            System.out.println("Enter UserId: ");
+                            String userId_booking = (read.nextLine()).toUpperCase();
+                            while(userId_booking.isBlank() | userId_booking.length()!=8){
+                                System.out.println("Please enter valid UserId !!");
+                                userId_booking = (read.nextLine()).toUpperCase();
+                            }
+                            HashMap<String, Integer> booking_schedule = intOpr.getBookingSchedule(userId_booking);
+                            if (booking_schedule.isEmpty()){
+                                System.out.println("There is no booked movie tickets found with the ID - " + userId_booking);
+                            }else{
+                            System.out.println("Here is your booking schedule..!!");
+                            System.out.println(booking_schedule);
+                            }
+                            break;
+                        case 6:
+                            System.out.println();
+                            System.out.println("Enter UserId: ");
+                            String userId_cancel = (read.nextLine()).toUpperCase();
+                            while(userId_cancel.isBlank() | userId_cancel.length()!=8){
+                                System.out.println("Please enter valid UserId !!");
+                                userId_cancel = (read.nextLine()).toUpperCase();
+                            }
+                            while(user_id != userId_cancel){
+                                System.out.println("Please enter valid UserId !!");
+                                userId_cancel = (read.nextLine()).toUpperCase();
+                            }
+                            System.out.println("Enter movie name you want to cancel from the option.");
+                            System.out.println("AVATAR \t AVENGER \t TITANIC");
+                            movieName = (read.nextLine()).toUpperCase();
+                            HashMap<String, Integer> booked_movie =intOpr.getBookingSchedule(user_id);
+                            if(booked_movie.isEmpty()){
+                                System.out.println("There is no booked movie tickets found with the ID -" + user_id);
+                                break;
+                            }
+                            else{
+                                System.out.println();
+                                booked_movie.get(userId_cancel);
+                                System.out.println("Here is the booked shows with the userID - "+user_id);
+                                for (String innerKey : booked_movie.keySet()) {
+                                    System.out.println("Inner Key: " + innerKey);
+                                    String[] split_value = innerKey.split("-");
+                                    if (split_value[0] == movieName){
+                                        System.out.println(split_value[1] + "-" + booked_movie.get(innerKey));
+                                    }else{
+                                        System.out.println();
+                                        System.out.println("No tickets found for " + movieName);
+                                    }
+                                }
+                            }
+                            System.out.println();
+                            System.out.println("Enter the movieId you want to cancel.");
+                            movieID = (read.nextLine()).toUpperCase();
+                            System.out.println();
+                            System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
+                            capacity = Integer.parseInt(read.nextLine());
+                            String data_response = intOpr.cancelMovieTickets(user_id, movieID, movieName, capacity);
+                            System.out.println(data_response);
+                            break;
+                        case 7:
                             login = false;
                             break;
                         default:
                             System.out.println();
-                            System.out.println("Invalid Choice..!!");
+                            System.out.println("!!..Invalid Choice..!!");
                             break;
                         }
                     }
