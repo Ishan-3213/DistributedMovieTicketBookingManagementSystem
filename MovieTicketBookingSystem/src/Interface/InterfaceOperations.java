@@ -14,7 +14,7 @@ public interface InterfaceOperations extends Remote{
     String userData(String customerID) throws RemoteException;
 
 
-//    String cancelMoveTickets(String customerID);
+    String cancelMovieTickets (String customerID, String movieID, String movieName, Integer numberOfTickets) throws RemoteException;
     /**
      * Permission Set - Admin Only.
      * This method add movie for particular movie if exist in hash map

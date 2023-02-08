@@ -159,10 +159,28 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
             return new HashMap<>();
         }
    }
-//
-//    @Override
-//    public String cancelMoveTickets(String customerID) {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+
+   @Override
+   public String cancelMovieTickets(String customerID, String movieID, String movieName, Integer numberOfTickets){
+
+        if(user_data.containsKey(customerID)){
+            if(user_data.get(customerID).containsKey(movieID)){
+                if(user_data.get(customerID).get(movieID) < numberOfTickets){
+                    user_data.get(customerID).put(movieID, user_data.get(customerID).get(movieID) - numberOfTickets);
+                    datastorage.get(movieName).put(movieID, datastorage.get(movieName).get(movieID) + numberOfTickets);
+                    return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
+                }
+                else{
+                    datastorage.get(movieName).put(movieID, user_data.get(customerID).get(movieID));
+                    user_data.get(customerID).remove(movieID);
+                    return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
+                }
+            }else{
+                return "No movie found with the movieID- " + movieID;
+            }
+        }else{
+            return "There is no userdata found with the id " + customerID;
     }
+       
+   }
+}
