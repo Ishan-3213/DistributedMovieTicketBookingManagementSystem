@@ -8,39 +8,60 @@ import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Arrays;
 
 public class Server {
-    static int RMIPortNum;
+    Integer RMIPortNum;
+    String server_name;
 
-    Server(int RMIPortNum, String server_name) throws RemoteException{
+    Server(int RMIPortNum, String server_name, String[] args) throws RemoteException{
         super();
         try{ 
+            this.server_name = server_name;
+            this.RMIPortNum = RMIPortNum;
 //            int RMIPortNum = 8001;
             LocateRegistry.getRegistry(RMIPortNum);
             Registry registry = LocateRegistry.createRegistry(RMIPortNum);
             ImplementationOperations impobj = new ImplementationOperations(server_name);
             registry.rebind("RegistryTest", impobj);
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
+            Runnable task = () -> {serve_listener(args);};
+            Thread t1 = new Thread(task);
+            t1.start();
             }catch (Exception re) {
             System.out.println("Exception in Server.main: " + re);
         }
-//        RMIPortNum = 8001;
-        // int RMIPortNum;
     }
-//    public Server(int port) {
-//    }
-
 
     public void serve_listener(String args[]){
         DatagramSocket datasocket = null;
         try {
-            datasocket = new DatagramSocket(8002);
-            byte [] buffer = new byte[1000];
+            datasocket = new DatagramSocket(this.RMIPortNum);
+            byte [] buffer = new byte[1024];
+            StringBuilder sb = new StringBuilder();
+
             while(true){
                 DatagramPacket received = new DatagramPacket(buffer, buffer.length);
                 datasocket.receive(received);
-                DatagramPacket reply = new DatagramPacket(received.getData(), received.getLength(),received.getAddress(), received.getPort());
-                datasocket.send(reply);
+                System.out.println(received.getData());
+                ImplementationOperations impobj = new ImplementationOperations(server_name);
+                String data = Arrays.toString(received.getData());
+                String [] splitted = data.split("|_|");
+                String method = splitted[0].trim();
+                String MovieName = splitted[1].trim();
+                switch(method){
+                    case "list_movie":
+                        String received_data = impobj.list_movie();
+                        System.out.println(received_data + "----");
+                        byte [] byte_data = received_data.getBytes();
+                        DatagramPacket reply = new DatagramPacket(byte_data, received_data.length() ,received.getAddress(), received.getPort());
+                        System.out.println("rpl-------y" +reply);
+                        datasocket.send(reply);
+                        break;
+                    default:
+                        System.out.println("Not working...!");
+                }
+
             }
         }catch (SocketException e) {System.out.println("Something wrong with the SKT-ServerSide: " + e.getMessage());
         }catch(IOException e){System.out.println("Somthing went wrong in IO: " + e.getMessage());
@@ -67,32 +88,4 @@ public class Server {
     // }
 
 
-// import java.rmi.server.UnicastRemoteObject;
 
-// import Interface.InterfaceOperations;
-
-// import java.net.DatagramPacket;
-// import java.net.DatagramSocket;
-// import java.net.InetAddress;
-
-// public class Server implements InterfaceOperations {
-//    public Server() {}
-
-//       // Do some processing
-//       String result = "Something done by Server 1";
-
-//       // Send a message to Server 2 using UDP/IP
-//       try {
-//          DatagramSocket socket = new DatagramSocket();
-//          InetAddress address = InetAddress.getByName("localhost");
-//          byte[] buffer = "Message from Server 1".getBytes();
-//          DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 5555);
-//          socket.send(packet);
-//          socket.close();
-//       } catch (Exception e) {
-//          System.err.println("Server 1 UDP exception: " + e.toString());
-//          e.printStackTrace();
-//       }
-
-//       return result;
-// }

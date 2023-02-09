@@ -10,9 +10,9 @@ import java.util.HashMap;
  */
 public interface InterfaceOperations extends Remote{
 
-
+  
     String userData(String customerID) throws RemoteException;
-
+    
 
     String cancelMovieTickets (String customerID, String movieID, String movieName, Integer numberOfTickets) throws RemoteException;
     /**
@@ -28,7 +28,7 @@ public interface InterfaceOperations extends Remote{
 
     /**
      * Permission Set - Admin Only.
-     * This method removes the movie if existed.
+     * This method removes the movie if existed.    
      * If movie show exist and customer has booked a ticket then
      * movie gets deleted and will book the same movie in next available slot for that customer.
      * @param movieId
