@@ -27,7 +27,11 @@ public class Server {
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
             Runnable task = () -> {serve_listener(args);};
             Thread t1 = new Thread(task);
+            Thread t2 = new Thread(task);
+            Thread t3 = new Thread(task);
             t1.start();
+            t2.start();
+            t3.start();
             }catch (Exception re) {
             System.out.println("Exception in Server.main: " + re);
         }
@@ -52,6 +56,8 @@ public class Server {
                 ImplementationOperations impobj = new ImplementationOperations(this.server_name);
                 String method = splitted[0];
                 String movie_name = splitted[1];
+                String movie_id = splitted[2];
+                String customer_id = splitted[3];
                 System.out.println(data+ "\n" +  method + "\n" + movie_name);
                 switch(method){
                     case "list_movie":

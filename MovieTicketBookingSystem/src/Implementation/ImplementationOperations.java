@@ -124,7 +124,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    public HashMap<String, Integer> listMovieShowsAvailability(String movieName) throws RemoteException {
        if (datastorage.containsKey(movieName)){
         
-        String data = this.UDPcall("list_movie" + "<>" + movieName);
+        String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null);
         // UDPcall("listMovieShowsAvailability");
            System.out.println(data);
            System.out.println("Here is the shows available for the movie " + movieName);
@@ -215,34 +215,19 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
     public String UDPcall(String methodsList) throws RemoteException{
-    // int Portnumber;
-    // ArrayList<String> server_name = new ArrayList<>();
+    StringBuilder sb = new StringBuilder();
     if(this.server_name.equals("ATW")) {
-        // do something
-//        Portnumber = 8001;
-//        server_name.add("VER");
-//        server_name.add("OUT");
-        StringBuilder sb = new StringBuilder();
-        sb.append(sending_message(methodsList, "OUT", 8002));
-        sb.append(sending_message(methodsList, "VER", 8003));
-        return sb.toString();
-    }
-//    }else if(this.server_name.equals("VER")){
-//        // call other two
-//        Portnumber = 8002;
-//        server_name.add("ATW");
-//        server_name.add("OUT");
-//        sending_message(null, server_name, Portnumber);
-//    }else if(this.server_name.equals("OUT")){
-//        // same here.
-//        Portnumber = 8003;
-//        server_name.add("VER");
-//        server_name.add("ATW");
-//        sending_message(null, server_name, Portnumber);
-//    }
+        sb.append(sending_message(methodsList, "OUT", 8003));
+        sb.append(sending_message(methodsList, "VER", 8002));
+    }else if(this.server_name.equals("VER")){
+        sb.append(sending_message(methodsList, "OUT", 8003));
+        sb.append(sending_message(methodsList, "ATW", 8001));
 
-    return "";
-    
+   }else if(this.server_name.equals("OUT")){
+        sb.append(sending_message(methodsList, "ATW", 8001));
+        sb.append(sending_message(methodsList, "VER", 8002));
+   }
+        return sb.toString();
    }
    
    public String list_movie(){
@@ -279,7 +264,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     }catch(IOException e){System.out.println("Something went wrong in IO: " + e.getMessage());
     }finally{if(datasocket != null){datasocket.close();}
     }
-    return "reply";
+    return "Udp connection not worked..!!";
 
 
     // DatagramSocket aSocket = null;
