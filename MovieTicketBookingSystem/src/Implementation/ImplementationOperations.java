@@ -24,47 +24,63 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         this.server_name = server_name;
         datastorage = new HashMap<>();
         user_data = new HashMap<>();
-        datastorage.put("AVATAR", new HashMap<String, Integer>());
-        datastorage.put("AVENGER", new HashMap<String, Integer>());
-        datastorage.put("TITANIC", new HashMap<String, Integer>());
-
-        user_data.put("ATWC1234", new HashMap<String, Integer>());
-        user_data.put("VERC4321", new HashMap<String, Integer>());
-        user_data.put("OUTC4321", new HashMap<String, Integer>());
 
         booking_hashmap = new HashMap<String, Integer>();
         customer_booking_hashmap = new HashMap<String, Integer>();
 
-        customer_booking_hashmap = user_data.get("ATWC1234");
-        customer_booking_hashmap.put("AVATAR-ATWM23022023", 5);
-        user_data.put("ATWC1234", customer_booking_hashmap);
-
-        customer_booking_hashmap = user_data.get("VERC4321");
-        customer_booking_hashmap.put("TITANIC-VERM23022023", 10);
-        user_data.put("VERC4321", customer_booking_hashmap);
+        datastorage.put("AVATAR", new HashMap<String, Integer>());
+        datastorage.put("AVENGER", new HashMap<String, Integer>());
+        datastorage.put("TITANIC", new HashMap<String, Integer>());
         
-        customer_booking_hashmap = user_data.get("OUTC4321");
-        customer_booking_hashmap.put("AVENGER-OUTM23022023", 10);
-        user_data.put("OUTC4321", customer_booking_hashmap);
+        if(server_name.equals("ATW")){
+            
+            booking_hashmap = datastorage.get("AVENGER");
+            booking_hashmap.put("ATWM23022023", 50);
+            booking_hashmap.put("ATWE23022023", 50);
+            datastorage.put("AVENGER", booking_hashmap);
+            
+            booking_hashmap = datastorage.get("TITANIC");
+            booking_hashmap.put("ATWA23022023", 50);
+            datastorage.put("TITANIC", booking_hashmap);
+            
+            user_data.put("ATWC1234", new HashMap<String, Integer>());
 
-        booking_hashmap = datastorage.get("AVATAR");
-        booking_hashmap.put("OUTM23022023", 100);
-        booking_hashmap.put("OUTE23022023", 100);
-        booking_hashmap.put("OUTA23022023", 100);
-        datastorage.put("AVATAR", booking_hashmap);
-        
-        booking_hashmap = datastorage.get("AVENGER");
-        booking_hashmap.put("ATWA23022023", 50);
-        booking_hashmap.put("ATWM23022023", 50);
-        booking_hashmap.put("ATWE23022023", 50);
-        datastorage.put("AVENGER", booking_hashmap);
+            customer_booking_hashmap = user_data.get("ATWC1234");
+            customer_booking_hashmap.put("AVATAR-ATWM23022023", 5);
+            user_data.put("ATWC1234", customer_booking_hashmap);
 
-        booking_hashmap = datastorage.get("TITANIC");
-        booking_hashmap.put("VERE23022023", 50);
-        booking_hashmap.put("VERA23022023", 50);
-        booking_hashmap.put("VERM23022023", 50);
-        datastorage.put("TITANIC", booking_hashmap);
+        }else if(server_name.equals("VER")){
+            booking_hashmap = datastorage.get("AVATAR");
+            booking_hashmap.put("VERA23022023", 50);
+            datastorage.put("AVATAR", booking_hashmap);
+            
+            booking_hashmap = datastorage.get("TITANIC");
+            booking_hashmap.put("VERE23022023", 50);
+            booking_hashmap.put("VERM23022023", 50);
+            datastorage.put("TITANIC", booking_hashmap);
 
+            user_data.put("VERC4321", new HashMap<String, Integer>());
+            
+            customer_booking_hashmap = user_data.get("VERC4321");
+            customer_booking_hashmap.put("TITANIC-VERM23022023", 10);
+            user_data.put("VERC4321", customer_booking_hashmap);
+
+        }else if(server_name.equals("OUT")){
+            
+            booking_hashmap = datastorage.get("AVATAR");
+            booking_hashmap.put("OUTM23022023", 100);
+            booking_hashmap.put("OUTE23022023", 100);
+            datastorage.put("AVATAR", booking_hashmap);
+
+            booking_hashmap = datastorage.get("AVENGER");
+            booking_hashmap.put("OUTA23022023", 100);
+            datastorage.put("AVENGER", booking_hashmap);
+
+            user_data.put("OUTC4321", new HashMap<String, Integer>());
+            customer_booking_hashmap = user_data.get("OUTC4321");
+            customer_booking_hashmap.put("AVENGER-OUTM23022023", 10);
+            user_data.put("OUTC4321", customer_booking_hashmap);
+        }
     }
 
     @Override
@@ -121,18 +137,21 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 //
    @Override
-   public HashMap<String, Integer> listMovieShowsAvailability(String movieName) throws RemoteException {
+   public String listMovieShowsAvailability(String movieName) throws RemoteException {
        if (datastorage.containsKey(movieName)){
         
-        String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null);
+        String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null + "<>" + 0);
+        // String data = new String(buffer, 0, data.getLength());
+        // String [] splitted = data.split("<>");
+
         // UDPcall("listMovieShowsAvailability");
-           System.out.println(data);
-           System.out.println("Here is the shows available for the movie " + movieName);
+           System.out.println("----------------------------------------------------------\n" +data.toString() + "----------------------------------------\n");
+           System.out.println(" Here is the shows available for the movie " + movieName);
            System.out.println(datastorage.get(movieName));
-           return datastorage.get(movieName);
+           return data;
        }
        else{
-        return new HashMap<>();
+        return "No movie slot found for the movie " + movieName;
        }
    }
 
@@ -230,12 +249,15 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         return sb.toString();
    }
    
-   public String list_movie(){
+   public String list_movie(String movie_name){
         StringBuilder sb = new StringBuilder();
        for (String OuterKey : this.datastorage.keySet()) {
+        System.out.println(OuterKey);
+            if(OuterKey.equals(movie_name)){
            for (String InnerKey : this.datastorage.get(OuterKey).keySet()){
                sb.append(OuterKey).append("<>").append(InnerKey).append("<>").append(this.datastorage.get(OuterKey).get(InnerKey)).append("\n");
            }
+        }
        }
     return  sb.toString();
    }
@@ -257,9 +279,11 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         byte[] response = new byte[1024];
         DatagramPacket reply = new DatagramPacket(response, response.length);
         datasocket.receive(reply);
+        String data = new String(response, 0, reply.getLength());
+        String [] splitted = data.split("<>");
 
-        System.out.println("Here is the data you recieved...!! " + (reply.getData()).toString());
-        return (reply.getData()).toString();
+        System.out.println("Here is the data you recieved...!! " + (data).toString());
+        return data;
     }catch(SocketException e){ System.out.println("Something went wrong with SKT: " + e.getMessage());
     }catch(IOException e){System.out.println("Something went wrong in IO: " + e.getMessage());
     }finally{if(datasocket != null){datasocket.close();}

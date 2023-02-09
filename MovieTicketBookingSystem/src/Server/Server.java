@@ -39,6 +39,10 @@ public class Server {
 
     public void serve_listener(String args[]){
         DatagramSocket datasocket = null;
+        String customer_id;
+        String movie_id;
+        String movie_name;
+        String method;
         try {
             datasocket = new DatagramSocket(this.RMIPortNum);
             byte [] buffer = new byte[1024];
@@ -54,18 +58,19 @@ public class Server {
                 String [] splitted = data.split("<>");
                 
                 ImplementationOperations impobj = new ImplementationOperations(this.server_name);
-                String method = splitted[0];
-                String movie_name = splitted[1];
-                String movie_id = splitted[2];
-                String customer_id = splitted[3];
+                Integer tickets = Integer.parseInt(splitted[4]);
+                customer_id = splitted[3];
+                movie_id = splitted[2];
+                movie_name = splitted[1];
+                method = splitted[0];
                 System.out.println(data+ "\n" +  method + "\n" + movie_name);
                 switch(method){
                     case "list_movie":
-                        String received_data = impobj.list_movie();
+                        String received_data = impobj.list_movie(movie_name);
                         System.out.println("----------" + received_data + "----------");
                         byte [] byte_data = received_data.getBytes();
                         DatagramPacket reply = new DatagramPacket(byte_data, received_data.length() ,received.getAddress(), received.getPort());
-                        System.out.println("MEssage from the server " + server_name + " at the port " +RMIPortNum);
+                        System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
                         datasocket.send(reply);
                         break;
                     default:

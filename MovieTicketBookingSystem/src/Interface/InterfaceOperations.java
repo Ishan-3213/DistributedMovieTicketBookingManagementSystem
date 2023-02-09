@@ -43,7 +43,7 @@ public interface InterfaceOperations extends Remote{
      * @param movieName
      * @return String If operation successful or not
      */
-   HashMap<String, Integer> listMovieShowsAvailability(String movieName) throws RemoteException;
+   String listMovieShowsAvailability(String movieName) throws RemoteException;
 
     /**
      * Permission Set - Admin and User.

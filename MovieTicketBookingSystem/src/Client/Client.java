@@ -10,15 +10,15 @@ import java.util.*;
 import Interface.InterfaceOperations;
 public class Client {
     public static void main(String[] args) {
-      try {
-        Registry registry = LocateRegistry.getRegistry(8001);
+        try {
+            Registry registry = LocateRegistry.getRegistry(8001);
         InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
-          AvailableOptions(intOpr);
+        AvailableOptions(intOpr);
         }catch (Exception e) {
            System.err.println("Server exception: " + e.toString());
            e.printStackTrace();
         }
-     }
+    }
     public static String AvailableOptions(InterfaceOperations intOpr) throws RemoteException{
         int user_choice;
         boolean is_admin;
@@ -45,7 +45,7 @@ public class Client {
             // Customer Options CLI
             if(!is_admin){
                 System.out.println();
-                System.out.println("\t \t Hey there Customer - " + user_id);
+                System.out.println("\t Hey there Customer - " + user_id);
                 while (choice) {
                 System.out.println("Select the choice given below: ");
                 System.out.println();
@@ -59,12 +59,15 @@ public class Client {
                         System.out.println("Enter movie name you want to add from the option.");
                         System.out.println("AVATAR \t AVENGER \t TITANIC");
                         movieName = (read.nextLine()).toUpperCase();
-                        HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
+                        String movie_shows =intOpr.listMovieShowsAvailability(movieName);
                         if(movie_shows.isEmpty()){
                             System.out.println("Sorry there is no show available for " + movieName);
                         }
                         else{
                             System.out.println("Here is the movie shows available for "+movieName);
+                            // Integer capacity = Integer.parseInt(splitted[2]);
+                            // String movie_name = splitted[1];
+                            // String method = splitted[0];
                             System.out.println(movie_shows);
                         }
                         System.out.println();
@@ -176,27 +179,33 @@ public class Client {
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
                             // if(movieList.contains(movieName)){
-                            //     System.out.println("It does contains...!!!!" + movieList);
-                            // }
+                                //     System.out.println("It does contains...!!!!" + movieList);
+                                // }
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
-                            while(movieID.isBlank() | movieID.length()<11 | movieName.isBlank()){
-                                System.out.println("Please enter valid movie details..!!");
+                            if(movieID.substring(0,3).equals(user_id.substring(0,3))){
+
+                                while(movieID.isBlank() | movieID.length()<11 | movieName.isBlank()){
+                                    System.out.println("\nPlease enter valid movie details..!!");
+                                    System.out.println();
+                                    System.out.println("Enter movie name you want to add from the option.");
+                                    System.out.println("AVATAR\nAVENGER\nTITANIC");
+                                    movieName = (read.nextLine()).toUpperCase();
+                                    System.out.println();
+                                    System.out.println("Enter movieId for the movie - " + movieName);
+                                    movieID = (read.nextLine()).toUpperCase();
+                                  }
                                 System.out.println();
-                                System.out.println("Enter movie name you want to add from the option.");
-                                System.out.println("AVATAR \t AVENGER \t TITANIC");
-                                movieName = (read.nextLine()).toUpperCase();
-                                System.out.println();
-                                System.out.println("Enter movieId for the movie - " + movieName);
-                                movieID = (read.nextLine()).toUpperCase();
-                              }
-                            System.out.println();
-                            System.out.println("Enter capacity for the Movie: " + movieName + " with the MovieId: "+ movieID);
-                            capacity = Integer.parseInt(read.nextLine());
-                            String response = intOpr.addMovieSlots(movieID, movieName, capacity);
-                            System.out.println(response);
-                            break;
+                                System.out.println("Enter capacity for the Movie: " + movieName + " with the MovieId: "+ movieID);
+                                capacity = Integer.parseInt(read.nextLine());
+                                String response = intOpr.addMovieSlots(movieID, movieName, capacity);
+                                System.out.println(response);
+                                break;
+                            }else{
+                                System.out.println("You have no permission to add movies in region! " + movieID.substring(0,3));
+                                break;
+                            }
                         case 2:
                             System.out.println("Enter movie name you want to remove from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
@@ -228,7 +237,9 @@ public class Client {
                                 System.out.println("AVATAR \t AVENGER \t TITANIC");
                                 movieName = (read.nextLine()).toUpperCase();
                             }
-                            HashMap<String, Integer> movie_shows =intOpr.listMovieShowsAvailability(movieName);
+                            String movie_shows = intOpr.listMovieShowsAvailability(movieName);
+                            String [] splitted = movie_shows.split("<>");
+                            System.out.println("splitted------>>>>>>>>>>" + splitted);
                             if(movie_shows.isEmpty()){
                                 System.out.println();
                                 System.out.println("Sorry there is no show available for-> " + movieName);
