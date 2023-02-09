@@ -27,23 +27,26 @@ public class Client {
         Integer capacity;
         String user_id;
         boolean login = true;
+        boolean choice = false;
         // List<String> movieList = Arrays.asList("AVATAR", "AVENGER", "TITANIC");
         try (Scanner read = new Scanner(System.in);){
-            System.out.println();
-            System.out.println("Please enter your UserID: ");
+
+        while(login){
+            System.out.println("\nPlease enter your UserID: ");
             user_id = (read.nextLine()).toUpperCase();
-            while(user_id.isBlank() | user_id.length()!=8){
-                    System.out.println("Please enter valid UserId !!");
+            while(user_id.isBlank() | user_id.length()>8){
+                    System.out.println("\nPlease enter valid UserId !!");
                     user_id = (read.nextLine()).toUpperCase();
             }
             System.out.println(user_id);
             intOpr.userData(user_id);
             is_admin = user_id.substring(0,4).endsWith("A") ? (!user_id.substring(0,4).endsWith("C") ? true : false) : false;
+            choice = true;
             // Customer Options CLI
             if(!is_admin){
                 System.out.println();
                 System.out.println("\t \t Hey there Customer - " + user_id);
-                while (login) {
+                while (choice) {
                 System.out.println("Select the choice given below: ");
                 System.out.println();
                 System.out.println("1. Book movie tickets.");
@@ -135,7 +138,7 @@ public class Client {
                         System.out.println(reply);
                         break;
                     case 4:
-                        login = false;
+                        choice = false;
                         break;
                     default:
                         System.out.println("Invalid Choice..!!");
@@ -144,11 +147,12 @@ public class Client {
                     }
                 }
             }
+            
             // Admin Options CLI
             else if(is_admin){
                 System.out.println();
                 System.out.println("---------------\tHey there Admin("+user_id+") ---------------");
-                while (login) {
+                while (choice) {
                     System.out.println("*******\tSelect the choice given below\t*******");
                     System.out.println();
                     String region = user_id.substring(0, 3);
@@ -301,12 +305,10 @@ public class Client {
                                 booked_movie.get(userId_cancel);
                                 System.out.println("Here is the booked shows with the userID - "+user_id);
                                 for (String innerKey : booked_movie.keySet()) {
-                                    System.out.println("Inner Key: " + innerKey);
                                     String[] split_value = innerKey.split("-");
                                     String splited_movie_name = split_value[0];
-                                    System.out.println(splited_movie_name + " <---split value----> " + split_value[0] + " "+ split_value[1]);
-                                    if (splited_movie_name == movieName){
-                                        System.out.println(split_value[1] + "/\\/" + booked_movie.get(innerKey));
+                                    if (splited_movie_name.trim().equals(movieName)){
+                                        System.out.println(split_value[1] + " " + booked_movie.get(innerKey));
                                     }else{
                                         System.out.println();
                                         System.out.println(split_value[1] + "/-/" + booked_movie.get(innerKey));
@@ -324,7 +326,7 @@ public class Client {
                             System.out.println(data_response);
                             break;
                         case 7:
-                            login = false;
+                            choice = false;
                             break;
                         default:
                             System.out.println();
@@ -333,8 +335,9 @@ public class Client {
                         }
                     }
                 }
+            }
         return "Thank you for your time..!!";
-        } catch (IOException e) {
+    } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

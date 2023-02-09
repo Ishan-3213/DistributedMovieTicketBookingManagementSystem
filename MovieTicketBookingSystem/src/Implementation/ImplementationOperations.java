@@ -1,6 +1,11 @@
 
 package Implementation;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
@@ -11,10 +16,12 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     HashMap<String, HashMap<String, Integer>> user_data;
     HashMap<String, Integer> booking_hashmap;
     HashMap<String, Integer> customer_booking_hashmap;
+    String server_name;
 
 
-    public ImplementationOperations() throws RemoteException {
+    public ImplementationOperations(String server_name) throws RemoteException {
         super();
+        this.server_name = server_name;
         datastorage = new HashMap<>();
         user_data = new HashMap<>();
         datastorage.put("AVATAR", new HashMap<String, Integer>());
@@ -196,4 +203,44 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     }
        
    }
+   
+   public void Sending_Message(String args[]){ 
+    // args give message contents and destination hostname
+    DatagramSocket datasocket = null;
+    try{
+        datasocket = new DatagramSocket();
+        int PortNumber = 8002;
+        byte[] btarray = args[0].getBytes();
+        InetAddress host_name = InetAddress.getLocalHost();
+        DatagramPacket request = new DatagramPacket(btarray, args[0].length(), host_name, PortNumber);
+        System.out.println(request);
+        datasocket.send(request);
+
+        byte[] response = new byte[1000];
+        DatagramPacket reply = new DatagramPacket(response, response.length);
+        datasocket.receive(reply);
+        System.out.println("Here is the data you send...!! " + reply.getData());
+    }catch(SocketException e){ System.out.println("Something went wrong with SKT: " + e.getMessage());
+    }catch(IOException e){System.out.println("Something went wrong in IO: " + e.getMessage());
+    }finally{if(datasocket != null){datasocket.close();}
+    }
+
+
+    // DatagramSocket aSocket = null;
+    // try {
+    //     aSocket = new DatagramSocket();    
+    //     byte [] m = args[0].getBytes();
+    //     InetAddress aHost = InetAddress.getByName(args[1]);
+    //     int serverPort = 6789;		                                                 
+    //     DatagramPacket request =
+    //          new DatagramPacket(m,  args[0].length(), aHost, serverPort);
+    //     aSocket.send(request);			                        
+    //     byte[] buffer = new byte[1000];
+    //     DatagramPacket reply = new DatagramPacket(buffer, buffer.length);	
+    //     aSocket.receive(reply);
+    //     System.out.println("Reply: " + new String(reply.getData()));	
+    // }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
+    // }catch (IOException e){System.out.println("IO: " + e.getMessage());
+    // }finally {if(aSocket != null) aSocket.close();}
+}	
 }

@@ -1,28 +1,71 @@
-package Server;
+package src.Server;
+
 import Implementation.ImplementationOperations;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-/* This class represents the object server for a distributed object of class 
-Hello, which implements the remote interface HelloInterface. */
 
 public class Server {
-    public static void main(String args[]) {
-        // InputStreamReader is = new InputStreamReader(System.in);
-        // BufferedReader br = new BufferedReader(is);
-        // String portNum;
+    static int RMIPortNum;
+
+    Server(int RMIPortNum, String server_name) throws RemoteException{
+        super();
         try{ 
-            int RMIPortNum = 8001;
+//            int RMIPortNum = 8001;
             LocateRegistry.getRegistry(RMIPortNum);
             Registry registry = LocateRegistry.createRegistry(RMIPortNum);
-            ImplementationOperations impobj = new ImplementationOperations();
+            ImplementationOperations impobj = new ImplementationOperations(server_name);
             registry.rebind("RegistryTest", impobj);
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
-
-        }catch (Exception re) {
-            System.out.println("Exception in HelloServer.main: " + re);
+            }catch (Exception re) {
+            System.out.println("Exception in Server.main: " + re);
         }
+//        RMIPortNum = 8001;
+        // int RMIPortNum;
+    }
+//    public Server(int port) {
+//    }
+
+
+    public void serve_listener(String args[]){
+        DatagramSocket datasocket = null;
+        try {
+            datasocket = new DatagramSocket(8002);
+            byte [] buffer = new byte[1000];
+            while(true){
+                DatagramPacket received = new DatagramPacket(buffer, buffer.length);
+                datasocket.receive(received);
+                DatagramPacket reply = new DatagramPacket(received.getData(), received.getLength(),received.getAddress(), received.getPort());
+                datasocket.send(reply);
+            }
+        }catch (SocketException e) {System.out.println("Something wrong with the SKT-ServerSide: " + e.getMessage());
+        }catch(IOException e){System.out.println("Somthing went wrong in IO: " + e.getMessage());
+        }finally{if(datasocket != null) datasocket.close();}
     }
 }
+
+
+    //     DatagramSocket aSocket = null;
+    //     try{
+    //         aSocket = new DatagramSocket(6789);
+    //                 // create socket at agreed port
+    //         byte[] buffer = new byte[1000];
+    //          while(true){
+    //              DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+    //               aSocket.receive(request);     
+    //             DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), 
+    //                 request.getAddress(), request.getPort());
+    //             aSocket.send(reply);
+    //         }
+    //     }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
+    //     }catch (IOException e) {System.out.println("IO: " + e.getMessage());
+    //     }finally {if(aSocket != null) aSocket.close();}
+    // }
+
 
 // import java.rmi.server.UnicastRemoteObject;
 
