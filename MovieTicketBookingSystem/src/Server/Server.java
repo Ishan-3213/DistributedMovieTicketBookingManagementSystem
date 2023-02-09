@@ -39,23 +39,27 @@ public class Server {
             datasocket = new DatagramSocket(this.RMIPortNum);
             byte [] buffer = new byte[1024];
             StringBuilder sb = new StringBuilder();
+            System.out.println("server-->>side " + this.server_name +"\n" + "Port ->" + this.RMIPortNum);
 
             while(true){
                 DatagramPacket received = new DatagramPacket(buffer, buffer.length);
                 datasocket.receive(received);
-                System.out.println(received.getData());
-                ImplementationOperations impobj = new ImplementationOperations(server_name);
-                String data = Arrays.toString(received.getData());
-                String [] splitted = data.split("|_|");
-                String method = splitted[0].trim();
-                String MovieName = splitted[1].trim();
+                
+                String data = new String(buffer, 0, received.getLength());
+                // String data = Arrays.toString(received.getData());
+                String [] splitted = data.split("<>");
+                
+                ImplementationOperations impobj = new ImplementationOperations(this.server_name);
+                String method = splitted[0];
+                String movie_name = splitted[1];
+                System.out.println(data+ "\n" +  method + "\n" + movie_name);
                 switch(method){
                     case "list_movie":
                         String received_data = impobj.list_movie();
-                        System.out.println(received_data + "----");
+                        System.out.println("----------" + received_data + "----------");
                         byte [] byte_data = received_data.getBytes();
                         DatagramPacket reply = new DatagramPacket(byte_data, received_data.length() ,received.getAddress(), received.getPort());
-                        System.out.println("rpl-------y" +reply);
+                        System.out.println("MEssage from the server " + server_name + " at the port " +RMIPortNum);
                         datasocket.send(reply);
                         break;
                     default:

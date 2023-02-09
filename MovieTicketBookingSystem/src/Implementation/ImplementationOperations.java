@@ -123,9 +123,10 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    @Override
    public HashMap<String, Integer> listMovieShowsAvailability(String movieName) throws RemoteException {
        if (datastorage.containsKey(movieName)){
-        this.UDPcall("list_movie|_|" + movieName);
+        
+        String data = this.UDPcall("list_movie" + "<>" + movieName);
         // UDPcall("listMovieShowsAvailability");
-           System.out.println();
+           System.out.println(data);
            System.out.println("Here is the shows available for the movie " + movieName);
            System.out.println(datastorage.get(movieName));
            return datastorage.get(movieName);
@@ -248,7 +249,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         StringBuilder sb = new StringBuilder();
        for (String OuterKey : this.datastorage.keySet()) {
            for (String InnerKey : this.datastorage.get(OuterKey).keySet()){
-               sb.append(OuterKey).append(InnerKey).append(this.datastorage.get(OuterKey).get(InnerKey)).append("\n");
+               sb.append(OuterKey).append("<>").append(InnerKey).append("<>").append(this.datastorage.get(OuterKey).get(InnerKey)).append("\n");
            }
        }
     return  sb.toString();
@@ -259,20 +260,20 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     // args give message contents and destination hostname
     DatagramSocket datasocket = null;
     try{
+        System.out.println("server is--->>" + server_name + " \nport-number" + PortNumber);
         datasocket = new DatagramSocket();
 //        byte[] bitarry = args[0].getBytes();
         byte[] arguments = method_name.getBytes();
         InetAddress host_name = InetAddress.getLocalHost();
        
         DatagramPacket request = new DatagramPacket(arguments, method_name.length(), host_name, PortNumber);
-        System.out.println(request);
         datasocket.send(request);
 
         byte[] response = new byte[1024];
         DatagramPacket reply = new DatagramPacket(response, response.length);
         datasocket.receive(reply);
 
-        System.out.println("Here is the data you send...!! " + reply.getData());
+        System.out.println("Here is the data you recieved...!! " + (reply.getData()).toString());
         return (reply.getData()).toString();
     }catch(SocketException e){ System.out.println("Something went wrong with SKT: " + e.getMessage());
     }catch(IOException e){System.out.println("Something went wrong in IO: " + e.getMessage());
