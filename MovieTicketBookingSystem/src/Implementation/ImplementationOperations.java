@@ -18,7 +18,6 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     HashMap<String, Integer> customer_booking_hashmap;
     String server_name;
 
-
     public ImplementationOperations(String server_name) throws RemoteException {
         super();
         this.server_name = server_name;
@@ -140,6 +139,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    public String listMovieShowsAvailability(String movieName) throws RemoteException {
        StringBuilder sBuilder = new StringBuilder();
        if (datastorage.containsKey(movieName)){
+            // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
             String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null + "<>" + 0);
             String [] splitted = (data.toString()).split("<>");
             String capacity = splitted[2];
@@ -167,45 +167,60 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
    @Override
-   public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) {
-    
-    if(datastorage.containsKey(movieName)){
-        if(datastorage.get(movieName).containsKey(movieId)){
-            if(datastorage.get(movieName).get(movieId) > numberOfTickets){
-                datastorage.get(movieName).put(movieId, datastorage.get(movieName).get(movieId) - numberOfTickets);
-                // Tickets are available 
-                String movie_string = movieName + "-" + movieId;
-                if (user_data.containsKey(customerID)){
-                    if (user_data.get(customerID).containsKey(movie_string) ){
-                        user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) + numberOfTickets);
-                        System.out.println(user_data.get(customerID) + " --LastIf-- " + customer_booking_hashmap);
-                        return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
-                        // if (customerID.substring(0, 3) == movieId.substring(0, 3)){
-                            // // TO-DO something with that same region thing...!!!
-                            // }
+   public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) throws RemoteException {
+    String methodsList;
+    StringBuilder sBuilder = new StringBuilder();
+    if(customerID.substring(0,3).equals(this.server_name)){
+        if(datastorage.containsKey(movieName)){
+            if(datastorage.get(movieName).containsKey(movieId)){
+                if(datastorage.get(movieName).get(movieId) > numberOfTickets){
+                    datastorage.get(movieName).put(movieId, datastorage.get(movieName).get(movieId) - numberOfTickets);
+                    // Tickets are available 
+                    String movie_string = movieName + "-" + movieId;
+                    if (user_data.containsKey(customerID)){
+                        if (user_data.get(customerID).containsKey(movie_string) ){
+                            user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) + numberOfTickets);
+                            System.out.println(user_data.get(customerID) + " --LastIf-- " + customer_booking_hashmap);
+                            return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
+                            // if (customerID.substring(0, 3) == movieId.substring(0, 3)){
+                                // // TO-DO something with that same region thing...!!!
+                                // }
+                        }else{
+                            // add data to the existing cutomer id in hashmap
+                            user_data.get(customerID).put(movie_string, numberOfTickets);
+                            System.out.println("Customer-ID --->>"+ customerID + " ---" + user_data.get(customerID) + " --last Else-- " + customer_booking_hashmap);
+                            return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
+                        }
                     }else{
-                        // add data to the existing cutomer id in hashmap
-                        user_data.get(customerID).put(movie_string, numberOfTickets);
-                        System.out.println("Customer-ID --->>"+ customerID + " ---" + user_data.get(customerID) + " --last Else-- " + customer_booking_hashmap);
+                        // create new customer id in hasmap
+                        customer_booking_hashmap.put(movie_string, numberOfTickets);
+                        user_data.put(customerID, customer_booking_hashmap);
+                        System.out.println(user_data.get(customerID) + " --second last else-- " + customer_booking_hashmap);
                         return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
                     }
                 }else{
-                    // create new customer id in hasmap
-                    customer_booking_hashmap.put(movie_string, numberOfTickets);
-                    user_data.put(customerID, customer_booking_hashmap);
-                    System.out.println(user_data.get(customerID) + " --second last else-- " + customer_booking_hashmap);
-                    return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
+                return numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId;
                 }
             }else{
-            return numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId;
+                return "No movie found with the ID" + movieId;        
             }
-        }else{
-            return "No movie found with the ID" + movieId;        
         }
+        return "No movie found with the name " + movieName;
+    
     }else{
-            return "No movie found with the name " + movieName;
+    // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
+        methodsList = "bookMovieTickets" + "<>" + movieName + "<>" + movieId + "<>" + customerID + "<>" + numberOfTickets;
+        if(customerID.substring(0, 3).equals("VER") && !(customerID.substring(0,3).equals(this.server_name))){
+            sBuilder.append(sending_message(methodsList, "VER", 8002));
+        }else if(customerID.substring(0, 3).equals("OUT") && !(customerID.substring(0,3).equals(this.server_name))){
+            sBuilder.append(sending_message(methodsList, "OUT", 8003));
+        }else if(customerID.substring(0, 3).equals("ATW") && !(customerID.substring(0,3).equals(this.server_name))){
+            sBuilder.append(sending_message(methodsList, "ATW", 8001));
         }
+        return sBuilder.toString();
+    
    }
+}
 
    @Override
    public HashMap<String, Integer> getBookingSchedule(String customerID){

@@ -73,6 +73,14 @@ public class Server {
                         System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
                         datasocket.send(reply);
                         break;
+                    case "bookMovieTickets":
+                        String data_received = impobj.bookMovieTickets(customer_id, movie_id, movie_name, tickets);
+                        System.out.println("----------" + data_received + "----------");
+                        byte [] data_byte = data_received.getBytes();
+                        DatagramPacket response = new DatagramPacket(byte_data, received_data.length() ,received.getAddress(), received.getPort());
+                        System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
+                        datasocket.send(response);
+                        break;
                     default:
                         System.out.println("Not working...!");
                 }
