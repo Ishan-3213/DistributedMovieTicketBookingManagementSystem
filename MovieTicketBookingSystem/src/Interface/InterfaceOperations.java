@@ -2,7 +2,6 @@ package Interface;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 
 /**
  * Operation Interface has method declaration for both admin and
@@ -63,5 +62,5 @@ public interface InterfaceOperations extends Remote{
      * @param customerID
      * @return String If operation successful or not
      */
-    HashMap<String, Integer> getBookingSchedule(String customerID) throws RemoteException;
+    String getBookingSchedule(String customerID) throws RemoteException;
 }

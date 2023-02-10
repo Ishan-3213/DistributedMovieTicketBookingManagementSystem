@@ -140,26 +140,37 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
        StringBuilder sBuilder = new StringBuilder();
        if (datastorage.containsKey(movieName)){
             // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
+            for (String OuterKey : this.datastorage.keySet()) {
+                System.out.println(OuterKey);
+                if(OuterKey.equals(movieName)){
+                   for (String InnerKey : this.datastorage.get(OuterKey).keySet()){
+                       sBuilder.append(InnerKey).append("<>").append(this.datastorage.get(OuterKey).get(InnerKey)).append("\n");
+                   }
+                }
+               }
             String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null + "<>" + 0);
-            String [] splitted = (data.toString()).split("<>");
-            String capacity = splitted[2];
-            String movie_id = splitted[1];
-            for(String x : splitted){
-                System.out.println(x.replace(movieName, "") + "###");
-                sBuilder.append(x).append("-");
-            }
-            System.out.println("----------------------------------------------------------\n" +data.toString() + "\n----------------------------------------\n" + data.replace(movieName, ""));
+            data = data.replace(movieName+"<>", "");
+            sBuilder.append(data);
+
+            // String [] splitted = (data.toString()).split("<>");
+            // String capacity = splitted[2];
+            // String movie_id = splitted[1];
+            // for(String x : splitted){
+            //     System.out.println(x.replace(movieName, "") + "###");
+            //     sBuilder.append(x).append("-");
+            // }
+            System.out.println("----------------------------------------------------------\n" +sBuilder.toString() + "\n----------------------------------------\n" );
             // System.out.println(datastorage.get(movieName));
-           if((datastorage.get(movieName)).isEmpty()){
-               System.out.println("There is no movie slot available for the " + movieName + " at the " + this.server_name);
-               sBuilder.append("There is no movie slot available for the " + movieName + " at the " + this.server_name);
+        //    if((datastorage.get(movieName)).isEmpty()){
+        //        System.out.println("There is no movie slot available for the " + movieName + " at the " + this.server_name);
+        //        sBuilder.append("There is no movie slot available for the " + movieName + " at the " + this.server_name);
                
-            }else{
-                System.out.println(" Here is the shows available for the movie " + movieName);
-                System.out.println(movie_id+ " - " + capacity);
-                sBuilder.append(movie_id).append(" - ").append(capacity);
-            }
-            return "No movie show found at "+ server_name + " theater.\n" +data.replace(movieName + "<>", "");
+        //     }else{
+        //         System.out.println(" Here is the shows available for the movie " + movieName);
+        //         // System.out.println(movie_id+ " - " + capacity);
+        //         // sBuilder.append(movie_id).append(" - ").append(capacity);
+        //     }
+            return (sBuilder.toString()).replace(movieName + "<>", "");
         }
        else{
         return "No movie slot found for the movie " + movieName;
@@ -170,7 +181,10 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) throws RemoteException {
     String methodsList;
     StringBuilder sBuilder = new StringBuilder();
-    if(customerID.substring(0,3).equals(this.server_name)){
+    Integer count=0;
+    // boolean theater_check;
+    // theater_check = (customerID.substring(0,3).equals(this.server_name)? (customerID.substring(0, 3).equals(movieId.substring(0,3) : true) : false))
+    if(movieId.substring(0,3).equals(this.server_name))  {
         if(datastorage.containsKey(movieName)){
             if(datastorage.get(movieName).containsKey(movieId)){
                 if(datastorage.get(movieName).get(movieId) > numberOfTickets){
@@ -195,7 +209,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                         // create new customer id in hasmap
                         customer_booking_hashmap.put(movie_string, numberOfTickets);
                         user_data.put(customerID, customer_booking_hashmap);
-                        System.out.println(user_data.get(customerID) + " --second last else-- " + customer_booking_hashmap);
+                        System.out.println(user_data.get(customerID) + " --New User-- " + customer_booking_hashmap);
                         return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
                     }
                 }else{
@@ -210,27 +224,48 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     }else{
     // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
         methodsList = "bookMovieTickets" + "<>" + movieName + "<>" + movieId + "<>" + customerID + "<>" + numberOfTickets;
-        if(customerID.substring(0, 3).equals("VER") && !(customerID.substring(0,3).equals(this.server_name))){
-            sBuilder.append(sending_message(methodsList, "VER", 8002));
-        }else if(customerID.substring(0, 3).equals("OUT") && !(customerID.substring(0,3).equals(this.server_name))){
-            sBuilder.append(sending_message(methodsList, "OUT", 8003));
-        }else if(customerID.substring(0, 3).equals("ATW") && !(customerID.substring(0,3).equals(this.server_name))){
-            sBuilder.append(sending_message(methodsList, "ATW", 8001));
+        for(String x : user_data.get(customerID).keySet()){
+            if (!(customerID.substring(0,3).equals(x.replace(movieName+"-", "").substring(0,3)))){
+                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + x + " substring thingi..=--->>" + x.replace(movieName+"-", "").substring(0,3));
+                count += 1;
+            }
         }
-        return sBuilder.toString();
+        if(count<=3){
+            if(movieId.substring(0, 3).equals("VER") && !(movieId.substring(0,3).equals(this.server_name))){
+                sBuilder.append(sending_message(methodsList, "VER", 8002));
+            }else if(movieId.substring(0, 3).equals("OUT") && !(movieId.substring(0,3).equals(this.server_name))){
+                sBuilder.append(sending_message(methodsList, "OUT", 8003));
+            }else if(movieId.substring(0, 3).equals("ATW") && !(movieId.substring(0,3).equals(this.server_name))){
+                sBuilder.append(sending_message(methodsList, "ATW", 8001));
+            }
+            return sBuilder.toString();
+        }else{
+            return "Customer with the id " + customerID + " has exceeded the limit of booking in other area.";
+        }
     
    }
 }
 
    @Override
-   public HashMap<String, Integer> getBookingSchedule(String customerID){
-        if(user_data.containsKey(customerID)){
-            System.out.println(user_data + "----->>>" + user_data.keySet());
-            return user_data.get(customerID);
+   public String getBookingSchedule(String customerID) throws RemoteException{
+            // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
+        String data = this.UDPcall("booking_schedule" + "<>" + null + "<>" + null + "<>" + customerID + "<>" + 0);
+        return data + "\n" + (user_data.get(customerID)).toString() + "\n";
+
+   }
+
+   public String booking_schedule(String customerID){
+
+        StringBuilder sb = new StringBuilder();
+        for (String OuterKey : this.user_data.keySet()) {
+            System.out.println(customerID + " OuterKey---->> " + OuterKey);
+            if(OuterKey.equals(customerID)){
+                for (String InnerKey : this.user_data.get(OuterKey).keySet()){
+                    sb.append(OuterKey).append("<>").append(InnerKey).append("<>").append(this.user_data.get(OuterKey).get(InnerKey)).append("<>").append(this.server_name).append("\n");
+                }
+            }
         }
-        else{
-            return new HashMap<>();
-        }
+        return  sb.toString();
    }
 
    @Override

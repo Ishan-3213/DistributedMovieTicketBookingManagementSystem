@@ -80,15 +80,15 @@ public class Client {
                         break;
                     case 2:
                         System.out.println();
-                        System.out.println("Enter UserId: ");
-                        String userId_booking = (read.nextLine()).toUpperCase();
-                        while(userId_booking.isBlank() | userId_booking.length()!=8){
-                            System.out.println("Please enter valid UserId !!");
-                            userId_booking = (read.nextLine()).toUpperCase();
-                        }
-                        HashMap<String, Integer> booking_schedule = intOpr.getBookingSchedule(userId_booking);
+                        // System.out.println("Enter UserId: ");
+                        // String userId_booking = (read.nextLine()).toUpperCase();
+                        // while(userId_booking.isBlank() | userId_booking.length()!=8){
+                            // System.out.println("Please enter valid UserId !!");
+                            // userId_booking = (read.nextLine()).toUpperCase();
+                        // }
+                        String booking_schedule = intOpr.getBookingSchedule(user_id);
                         if (booking_schedule.isEmpty()){
-                            System.out.println("There is no booked movie tickets found with the ID - " + userId_booking);
+                            System.out.println("There is no booked movie tickets found with the ID - " + user_id);
                         }else{
                             System.out.println("Here is your booking schedule..!!");
                             System.out.println(booking_schedule);
@@ -109,31 +109,32 @@ public class Client {
                         System.out.println("Enter movie name you want to cancel from the option.");
                         System.out.println("AVATAR \t AVENGER \t TITANIC");
                         movieName = (read.nextLine()).toUpperCase();
-                        HashMap<String, Integer> booked_movie =intOpr.getBookingSchedule(user_id);
+                        String booked_movie =intOpr.getBookingSchedule(user_id);
                         if(booked_movie.isEmpty()){
                             System.out.println("There is no booked movie tickets found with the ID -" + user_id);
                             break;
                         }
                         else{
                             System.out.println();
-                            booked_movie.get(userId_cancel);
+                            // booked_movie.get(userId_cancel);
                             System.out.println("Here is the booked shows with the userID - "+user_id);
-                            boolean found_movie = true;
-                            for (String innerKey : booked_movie.keySet()) {
-                                String[] split_value = innerKey.split("-");
-                                if (split_value[0].equals(movieName)){
-                                    System.out.println(split_value[1] + "-" + booked_movie.get(innerKey));
-                                    found_movie = true;
-                                }else{
-                                    System.out.println();
-                                    System.out.println("No tickets found for " + movieName);
-                                    found_movie =false;
-                                    break;
-                                }
-                            }
-                            if(!found_movie){
-                                break;
-                            }
+                            System.out.println(booked_movie);
+                            // boolean found_movie = true;
+                            // for (String innerKey : booked_movie.keySet()) {
+                            //     String[] split_value = innerKey.split("-");
+                            //     if (split_value[0].equals(movieName)){
+                            //         System.out.println(split_value[1] + "-" + booked_movie.get(innerKey));
+                            //         found_movie = true;
+                            //     }else{
+                            //         System.out.println();
+                            //         System.out.println("No tickets found for " + movieName);
+                            //         found_movie =false;
+                            //         break;
+                            //     }
+                            // }
+                            // if(!found_movie){
+                            //     break;
+                            // }
                         }
                         System.out.println();
                         System.out.println("Enter the movieId you want to cancel.");
@@ -288,7 +289,7 @@ public class Client {
                                 System.out.println("Please enter valid UserId !!");
                                 userId_booking = (read.nextLine()).toUpperCase();
                             }
-                            HashMap<String, Integer> booking_schedule = intOpr.getBookingSchedule(userId_booking);
+                            String booking_schedule = intOpr.getBookingSchedule(userId_booking);
                             if (booking_schedule.isEmpty()){
                                 System.out.println("There is no booked movie tickets found with the ID - " + userId_booking);
                             }else{
