@@ -138,18 +138,29 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 //
    @Override
    public String listMovieShowsAvailability(String movieName) throws RemoteException {
+       StringBuilder sBuilder = new StringBuilder();
        if (datastorage.containsKey(movieName)){
-        
-        String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null + "<>" + 0);
-        // String data = new String(buffer, 0, data.getLength());
-        // String [] splitted = data.split("<>");
-
-        // UDPcall("listMovieShowsAvailability");
-           System.out.println("----------------------------------------------------------\n" +data.toString() + "----------------------------------------\n");
-           System.out.println(" Here is the shows available for the movie " + movieName);
-           System.out.println(datastorage.get(movieName));
-           return data;
-       }
+            String data = this.UDPcall("list_movie" + "<>" + movieName + "<>" + null + "<>" + null + "<>" + 0);
+            String [] splitted = (data.toString()).split("<>");
+            String capacity = splitted[2];
+            String movie_id = splitted[1];
+            for(String x : splitted){
+                System.out.println(x.replace(movieName, "") + "###");
+                sBuilder.append(x).append("-");
+            }
+            System.out.println("----------------------------------------------------------\n" +data.toString() + "\n----------------------------------------\n" + data.replace(movieName, ""));
+            // System.out.println(datastorage.get(movieName));
+           if((datastorage.get(movieName)).isEmpty()){
+               System.out.println("There is no movie slot available for the " + movieName + " at the " + this.server_name);
+               sBuilder.append("There is no movie slot available for the " + movieName + " at the " + this.server_name);
+               
+            }else{
+                System.out.println(" Here is the shows available for the movie " + movieName);
+                System.out.println(movie_id+ " - " + capacity);
+                sBuilder.append(movie_id).append(" - ").append(capacity);
+            }
+            return "No movie show found at "+ server_name + " theater.\n" +data.replace(movieName + "<>", "");
+        }
        else{
         return "No movie slot found for the movie " + movieName;
        }
@@ -280,7 +291,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         DatagramPacket reply = new DatagramPacket(response, response.length);
         datasocket.receive(reply);
         String data = new String(response, 0, reply.getLength());
-        String [] splitted = data.split("<>");
+        // String [] splitted = data.split("<>");
 
         System.out.println("Here is the data you recieved...!! " + (data).toString());
         return data;

@@ -6,8 +6,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.*;
-
 import Interface.InterfaceOperations;
+
 public class Client {
     public static void main(String[] args) {
         try {
@@ -64,11 +64,9 @@ public class Client {
                             System.out.println("Sorry there is no show available for " + movieName);
                         }
                         else{
-                            System.out.println("Here is the movie shows available for "+movieName);
-                            // Integer capacity = Integer.parseInt(splitted[2]);
-                            // String movie_name = splitted[1];
-                            // String method = splitted[0];
-                            System.out.println(movie_shows);
+                            System.out.println();
+                            System.out.println("Here is the movie shows available for the "+movieName);
+                            System.out.println(movie_shows.replace("<>", "-"));
                         }
                         System.out.println();
                         System.out.println("Enter the movieId you want to book.");
@@ -92,8 +90,8 @@ public class Client {
                         if (booking_schedule.isEmpty()){
                             System.out.println("There is no booked movie tickets found with the ID - " + userId_booking);
                         }else{
-                        System.out.println("Here is your booking schedule..!!");
-                        System.out.println(booking_schedule);
+                            System.out.println("Here is your booking schedule..!!");
+                            System.out.println(booking_schedule);
                         }
                         break;
                     case 3:
@@ -238,8 +236,8 @@ public class Client {
                                 movieName = (read.nextLine()).toUpperCase();
                             }
                             String movie_shows = intOpr.listMovieShowsAvailability(movieName);
-                            String [] splitted = movie_shows.split("<>");
-                            System.out.println("splitted------>>>>>>>>>>" + splitted);
+                            // String [] splitted = movie_shows.split("<>");
+                            // System.out.println("splitted------>>>>>>>>>>" + splitted);
                             if(movie_shows.isEmpty()){
                                 System.out.println();
                                 System.out.println("Sorry there is no show available for-> " + movieName);
@@ -248,7 +246,7 @@ public class Client {
                             else{
                                 System.out.println();
                                 System.out.println("Here is the movie shows available for the "+movieName);
-                                System.out.println(movie_shows);
+                                System.out.println(movie_shows.replace("<>", "-"));
                             }
                             break;
                         case 4:
