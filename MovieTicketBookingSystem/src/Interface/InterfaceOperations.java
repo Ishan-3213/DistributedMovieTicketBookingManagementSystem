@@ -9,10 +9,6 @@ import java.rmi.RemoteException;
  */
 public interface InterfaceOperations extends Remote{
 
-  
-    String userData(String customerID) throws RemoteException;
-    
-
     String cancelMovieTickets (String customerID, String movieID, String movieName, Integer numberOfTickets) throws RemoteException;
     /**
      * Permission Set - Admin Only.

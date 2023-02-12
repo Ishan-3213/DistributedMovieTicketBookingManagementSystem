@@ -25,7 +25,7 @@ public class Server {
             ImplementationOperations impobj = new ImplementationOperations(server_name);
             registry.rebind("RegistryTest", impobj);
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
-            Runnable task = () -> {serve_listener();};
+            Runnable task = () -> {serve_listener(impobj);};
             Thread t1 = new Thread(task);
             t1.start();
             }catch (Exception re) {
@@ -33,7 +33,7 @@ public class Server {
         }
     }
 
-    public void serve_listener(){
+    public void serve_listener(ImplementationOperations impobj){
         DatagramSocket datasocket = null;
         String customer_id;
         String movie_id;
@@ -53,7 +53,7 @@ public class Server {
                 // String data = Arrays.toString(received.getData());
                 String [] splitted = data.split("<>");
                 
-                ImplementationOperations impobj = new ImplementationOperations(this.server_name);
+//                ImplementationOperations impobj = new ImplementationOperations(this.server_name);
                 Integer tickets = Integer.parseInt(splitted[4]);
                 customer_id = splitted[3];
                 movie_id = splitted[2];

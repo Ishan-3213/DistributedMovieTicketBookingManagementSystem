@@ -12,15 +12,16 @@ public class Log {
         super();
         try {
             file = new File("D:/Academic/Concordia/Sem-1/DSD/Assignemnt/DMTMS/DistributedMovieTicketBookingManagementSystem/MovieTicketBookingSystem/src/Log/"+ fname + ".txt");
-            if(file.exists()){
+            if(!file.exists()){
+                file.createNewFile();
+
+            }
                 FileHandler file = new FileHandler(fname, true);
                 logger = Logger.getAnonymousLogger();
                 logger.setUseParentHandlers(false);
                 logger.addHandler(file);
                 SimpleFormatter format = new SimpleFormatter();
                 file.setFormatter(format);
-            }
-            file.createNewFile();
         } catch (IOException | SecurityException ex) {
             ex.getStackTrace();
         }
