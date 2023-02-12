@@ -1,16 +1,10 @@
-package src.Log;
-
-import src.Client.Client;
-
+package Log;
 import java.io.*;
-import java.lang.System.Logger.Level;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class Log {
-    // public Logger logger;
-//    private static Logger logClass = Logger.getLogger("Logs");
     public Logger logger;
     File file;
 

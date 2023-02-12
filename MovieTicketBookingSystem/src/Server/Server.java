@@ -1,4 +1,4 @@
-package src.Server;
+package Server;
 
 import Implementation.ImplementationOperations;
 import java.io.IOException;
@@ -14,7 +14,7 @@ public class Server {
     Integer RMIPortNum;
     String server_name;
 
-    Server(int RMIPortNum, String server_name, String[] args) throws RemoteException{
+    Server(int RMIPortNum, String server_name) throws RemoteException{
         super();
         try{ 
             this.server_name = server_name;
@@ -25,19 +25,15 @@ public class Server {
             ImplementationOperations impobj = new ImplementationOperations(server_name);
             registry.rebind("RegistryTest", impobj);
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
-            Runnable task = () -> {serve_listener(args);};
+            Runnable task = () -> {serve_listener();};
             Thread t1 = new Thread(task);
-            Thread t2 = new Thread(task);
-            Thread t3 = new Thread(task);
             t1.start();
-            t2.start();
-            t3.start();
             }catch (Exception re) {
             System.out.println("Exception in Server.main: " + re);
         }
     }
 
-    public void serve_listener(String args[]){
+    public void serve_listener(){
         DatagramSocket datasocket = null;
         String customer_id;
         String movie_id;

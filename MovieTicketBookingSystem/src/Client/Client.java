@@ -9,37 +9,50 @@ import java.util.*;
 import Interface.InterfaceOperations;
 
 public class Client {
+    static String user_id;
+    static Integer RMIPortNumber;
     public static void main(String[] args) {
-        try {
-            Registry registry = LocateRegistry.getRegistry(8001);
-        InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
-        AvailableOptions(intOpr);
+        try (Scanner read = new Scanner(System.in);){
+            System.out.println("\nPlease enter your UserID: ");
+            user_id = (read.nextLine()).toUpperCase();
+            while(user_id.isBlank() | user_id.length()!=8 ){
+                System.out.println("\nPlease enter valid UserId !!");
+                user_id = (read.nextLine()).toUpperCase();
+            }
+            System.out.println(user_id);
+            if (user_id.substring(0,3).equals("ATW")){
+                RMIPortNumber = 8001;
+
+            }else if(user_id.substring(0,3).equals("VER")) {
+                RMIPortNumber = 8002;
+            } else if (user_id.substring(0,3).equals("OUT")){
+                RMIPortNumber = 8003;
+            }
+            else {
+                System.out.println("Didn't find the server");
+            }
+            Registry registry = LocateRegistry.getRegistry(RMIPortNumber);
+            InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
+            intOpr.userData(user_id);
+            AvailableOptions(intOpr, user_id);
         }catch (Exception e) {
            System.err.println("Server exception: " + e.toString());
            e.printStackTrace();
         }
     }
-    public static String AvailableOptions(InterfaceOperations intOpr) throws RemoteException{
-        int user_choice;
+    public static String AvailableOptions(InterfaceOperations intOpr, String user_id) throws RemoteException{
+        Integer user_choice;
         boolean is_admin;
         String movieName;
         String movieID;
         Integer capacity;
-        String user_id;
         boolean login = true;
         boolean choice = false;
         // List<String> movieList = Arrays.asList("AVATAR", "AVENGER", "TITANIC");
         try (Scanner read = new Scanner(System.in);){
 
         while(login){
-            System.out.println("\nPlease enter your UserID: ");
-            user_id = (read.nextLine()).toUpperCase();
-            while(user_id.isBlank() | user_id.length()>8){
-                    System.out.println("\nPlease enter valid UserId !!");
-                    user_id = (read.nextLine()).toUpperCase();
-            }
-            System.out.println(user_id);
-            intOpr.userData(user_id);
+
             is_admin = user_id.substring(0,4).endsWith("A") ? (!user_id.substring(0,4).endsWith("C") ? true : false) : false;
             choice = true;
             // Customer Options CLI
@@ -147,6 +160,7 @@ public class Client {
                         break;
                     case 4:
                         choice = false;
+                        login = false;
                         break;
                     default:
                         System.out.println("Invalid Choice..!!");
@@ -252,6 +266,7 @@ public class Client {
                             break;
                         case 4:
                             choice = false;
+                            login = false;
                             break;
                             // System.out.println();
                             // System.out.println("Enter UserId: ");
@@ -300,6 +315,7 @@ public class Client {
                         case 6:
                             System.out.println("Logging out from the - " + user_id);
                             choice = false;
+                            login = false;
                             break;
                             // System.out.println();
                             // System.out.println("Enter UserId: ");
@@ -348,6 +364,7 @@ public class Client {
                             // break;
                         case 7:
                             choice = false;
+                            login = false;
                             break;
                         default:
                             System.out.println();
