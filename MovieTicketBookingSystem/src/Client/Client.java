@@ -79,17 +79,19 @@ public class Client {
                 user_choice = Integer.parseInt(read.nextLine()) ;
                 switch (user_choice) {
                     case 1:
-                        LogObj.info(user_id + " wants to book movie.");
-                        System.out.println("Enter movie name you want to add from the option.");
-                        System.out.println("AVATAR \t AVENGER \t TITANIC");
-                        movieName = (read.nextLine()).toUpperCase();
-                        if (movieName.isBlank() | movieName.isEmpty()){
-                            System.out.println("Please enter valid movie-Name\n");
-                            break;
-                        }
+                    LogObj.info(user_id + " wants to book movie.");
+                    System.out.println("Enter movie name you want to add from the option.");
+                    System.out.println("AVATAR \t AVENGER \t TITANIC");
+                    movieName = (read.nextLine()).toUpperCase();
+                    if (movieName.isBlank() | movieName.isEmpty()){
+                        System.out.println("Please enter valid movie-Name\n");
+                        LogObj.info("Please enter valid movie-Name\n");
+                        break;
+                    }
                         String movie_shows =intOpr.listMovieShowsAvailability(movieName);
                         if(movie_shows.isEmpty()){
                             System.out.println("Sorry there is no show available for " + movieName);
+                            LogObj.info("Sorry there is no show available for " + movieName);
                             break;
                         }
                         else{
@@ -102,11 +104,13 @@ public class Client {
                         movieID = (read.nextLine()).toUpperCase();
                         if (movieID.isBlank() | movieID.isEmpty()){
                             System.out.println("Please enter valid movie-ID\n");
+                            LogObj.info(user_id + " User has entered invalid movie-ID\n");
                             break;
                         }
                         long days = DaysLeft(movieID);
                         if (days>7 | days<0) {
                             System.out.println("Can not book tickets later than 1 week/before today.\n");
+                            LogObj.info("Can not book tickets later than 1 week/before today.\n");
                             break;
                         }
                         System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
@@ -127,7 +131,6 @@ public class Client {
                             System.out.println("Here is your booking schedule..!!\n");
                             System.out.println(booking_schedule);
                             LogObj.info(user_id + "'s booking schedule: \n" + booking_schedule);
-
                         }
                         break;
                     case 3:
@@ -142,7 +145,8 @@ public class Client {
                         }
                         while(!user_id.equals(userId_cancel)){
                             System.out.println("Unauthorized..!! You are not logged in with the given userID!!");
-                            userId_cancel = (read.nextLine()).toUpperCase();
+                            // userId_cancel = (read.nextLine()).toUpperCase();
+                            LogObj.info(user_id + " has no booked movie tickets.");
                             break;
                         }
                         String booked_movie =intOpr.getBookingSchedule(user_id);
@@ -161,6 +165,7 @@ public class Client {
                         movieName = (read.nextLine()).toUpperCase();
                         if (!booked_movie.contains(movieName)){
                             System.out.println("You have no show booked for the movie "+ movieName );
+                            LogObj.info(user_id + " has no booked for the movie "+ movieName);
                             break;
                         }
                         System.out.println();
@@ -168,6 +173,7 @@ public class Client {
                         movieID = (read.nextLine()).toUpperCase();
                         if (!booked_movie.contains(movieID)){
                             System.out.println("You have no show booked for the movieID "+ movieID );
+                            LogObj.info(user_id + " has no booked for the movieID "+ movieID);
                             break;
                         }
                         System.out.println();
@@ -232,7 +238,7 @@ public class Client {
                                     System.out.println("AVATAR\nAVENGER\nTITANIC");
                                     movieName = (read.nextLine()).toUpperCase();
                                     System.out.println();
-                                    System.out.println("Enter movieId for the movie - " + movieName);
+                                    System.out.println("Enter movieId for the movie - " + movieName + " ");
                                     movieID = (read.nextLine()).toUpperCase();
                                   }
                                 System.out.println();

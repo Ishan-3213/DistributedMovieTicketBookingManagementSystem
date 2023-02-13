@@ -1,0 +1,32 @@
+Feb 13, 2023 4:34:12 PM Client.Client AvailableOptions
+INFO: Client has been logged with ID: ATWC1234
+Feb 13, 2023 4:34:14 PM Client.Client AvailableOptions
+INFO: ATWC1234's booking schedule: 
+AVENGER-ATWM23022023:5
+
+Feb 13, 2023 4:34:16 PM Client.Client AvailableOptions
+INFO: ATWC1234 wants to book movie.
+Feb 13, 2023 4:34:27 PM Client.Client AvailableOptions
+INFO: 30 tickets booked for the movie AVATAR-OUTE15022023
+Feb 13, 2023 4:34:28 PM Client.Client AvailableOptions
+INFO: ATWC1234's booking schedule: 
+AVENGER-ATWM23022023:5
+AVATAR-OUTE15022023:30
+
+Feb 13, 2023 5:32:20 PM Client.Client AvailableOptions
+INFO: Client has been logged with ID: ATWC1234
+Feb 13, 2023 5:32:24 PM Client.Client AvailableOptions
+INFO: ATWC1234's booking schedule: 
+AVENGER-ATWM13022023:5
+
+Feb 13, 2023 5:32:29 PM Client.Client AvailableOptions
+INFO: ATWC1234 wants to book movie.
+Feb 13, 2023 5:32:51 PM Client.Client AvailableOptions
+INFO: ATWC1234 wants to book movie.
+Feb 13, 2023 5:33:03 PM Client.Client AvailableOptions
+INFO: 20 tickets booked for the movie AVENGER-OUTA20022023
+Feb 13, 2023 5:33:14 PM Client.Client AvailableOptions
+INFO: ATWC1234's booking schedule: 
+AVENGER-ATWM13022023:5
+AVENGER-OUTA20022023:20
+

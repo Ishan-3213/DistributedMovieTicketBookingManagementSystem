@@ -13,18 +13,20 @@ import java.util.logging.Logger;
 public class Server {
     Integer RMIPortNum;
     String server_name;
+    Logger LogObj;
 
     Server(int RMIPortNum, String server_name, Logger LogObj) throws RemoteException{
         super();
         try{ 
             this.server_name = server_name;
             this.RMIPortNum = RMIPortNum;
+            this.LogObj = LogObj;
             LocateRegistry.getRegistry(RMIPortNum);
             Registry registry = LocateRegistry.createRegistry(RMIPortNum);
             ImplementationOperations impobj = new ImplementationOperations(server_name, LogObj);
             registry.rebind("RegistryTest", impobj);
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
-            Runnable task = () -> {serve_listener(impobj);};
+            Runnable task = () -> {serve_listener(impobj, LogObj);};
             Thread t1 = new Thread(task);
             t1.start();
             }catch (Exception re) {
@@ -32,7 +34,7 @@ public class Server {
         }
     }
 
-    public void serve_listener(ImplementationOperations impobj){
+    public void serve_listener(ImplementationOperations impobj, Logger LogObj){
         DatagramSocket datasocket = null;
         String customer_id;
         String movie_id;
@@ -41,7 +43,7 @@ public class Server {
         try {
             datasocket = new DatagramSocket(this.RMIPortNum);
             byte [] buffer = new byte[1024];
-            System.out.println("server-->>side " + this.server_name +"\n" + "Port ->" + this.RMIPortNum);
+            System.out.println("Server ->" + this.server_name +"\n" + "Port ->" + this.RMIPortNum);
 
             while(true){
                 DatagramPacket received = new DatagramPacket(buffer, buffer.length);
@@ -63,30 +65,34 @@ public class Server {
                         byte [] byte_data = received_data.getBytes();
                         DatagramPacket reply = new DatagramPacket(byte_data, received_data.length() ,received.getAddress(), received.getPort());
                         System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
+                        LogObj.info("Message from the server " + server_name + " in list_movie at the port " +RMIPortNum);
                         datasocket.send(reply);
                         break;
-                    case "bookMovieTickets":
+                        case "bookMovieTickets":
                         String data_received = impobj.bookMovieTickets(customer_id, movie_id, movie_name, tickets);
                         System.out.println("----------" + data_received + "----------");
                         byte [] data_byte = data_received.getBytes();
                         DatagramPacket response = new DatagramPacket(data_byte, data_received.length() ,received.getAddress(), received.getPort());
                         System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
+                        LogObj.info("Message from the server " + server_name + " in bookMovieTickets at the port " +RMIPortNum);
                         datasocket.send(response);
                         break;
-                    case "booking_schedule":
+                        case "booking_schedule":
                         String received_str = impobj.booking_schedule(customer_id);
                         System.out.println("----------" + received_str + "----------");
                         byte [] data_byt = received_str.getBytes();
                         DatagramPacket answer = new DatagramPacket(data_byt, received_str.length() ,received.getAddress(), received.getPort());
                         System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
+                        LogObj.info("Message from the server " + server_name + " in booking_schedule at the port " +RMIPortNum);
                         datasocket.send(answer);
                         break;
-                    case "cancelMovieTickets":
+                        case "cancelMovieTickets":
                         String str_received = impobj.cancelMovieTickets(customer_id, movie_id, movie_name, tickets);
                         System.out.println("----------" + str_received + "----------");
                         byte [] byt_data = str_received.getBytes();
                         DatagramPacket acknowledgment = new DatagramPacket(byt_data, str_received.length() ,received.getAddress(), received.getPort());
                         System.out.println("Message from the server " + server_name + " at the port " +RMIPortNum);
+                        LogObj.info("Message from the server " + server_name + " in cancelMovieTickets at the port " +RMIPortNum);
                         datasocket.send(acknowledgment);
                         break;
                     default:

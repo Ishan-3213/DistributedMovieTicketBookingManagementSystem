@@ -11,7 +11,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import Interface.InterfaceOperations;
-import Logs.Log;
 
 public class ImplementationOperations extends UnicastRemoteObject implements InterfaceOperations {
     HashMap<String, HashMap<String, Integer>> datastorage;
@@ -20,9 +19,6 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     HashMap<String, Integer> customer_booking_hashmap;
     String server_name;
     Logger LogObj;
-
-    // Static Values..!!
-
 
     public ImplementationOperations(String server_name, Logger LogObj) throws RemoteException {
         super();
@@ -45,13 +41,13 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
             datastorage.put("AVENGER", booking_hashmap);
 
             booking_hashmap = datastorage.get("TITANIC");
-            booking_hashmap.put("ATWA23022023", 50);
+            booking_hashmap.put("ATWA13022023", 50);
             datastorage.put("TITANIC", booking_hashmap);
 
             user_data.put("ATWC1234", new HashMap<String, Integer>());
 
             customer_booking_hashmap = user_data.get("ATWC1234");
-            customer_booking_hashmap.put("AVENGER-ATWM23022023", 5);
+            customer_booking_hashmap.put("AVENGER-ATWM13022023", 5);
             user_data.put("ATWC1234", customer_booking_hashmap);
 
         }else if(server_name.equals("VER")){
@@ -61,13 +57,13 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
             booking_hashmap = datastorage.get("TITANIC");
             booking_hashmap.put("VERE23022023", 50);
-            booking_hashmap.put("VERM23022023", 50);
+            booking_hashmap.put("VERM20022023", 50);
             datastorage.put("TITANIC", booking_hashmap);
 
             user_data.put("VERC4321", new HashMap<String, Integer>());
 
             customer_booking_hashmap = user_data.get("VERC4321");
-            customer_booking_hashmap.put("TITANIC-VERM23022023", 10);
+            customer_booking_hashmap.put("TITANIC-VERM20022023", 10);
             user_data.put("VERC4321", customer_booking_hashmap);
 
         }else if(server_name.equals("OUT")){
