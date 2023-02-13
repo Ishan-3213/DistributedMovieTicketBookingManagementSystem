@@ -52,7 +52,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
             user_data.put("ATWC1234", new HashMap<String, Integer>());
 
             customer_booking_hashmap = user_data.get("ATWC1234");
-            customer_booking_hashmap.put("AVATAR-ATWM23022023", 5);
+            customer_booking_hashmap.put("AVENGER-ATWM23022023", 5);
             user_data.put("ATWC1234", customer_booking_hashmap);
 
         }else if(server_name.equals("VER")){
@@ -175,15 +175,17 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     StringBuilder sBuilder = new StringBuilder();
     LogObj = new Log(server_name);
 
-       Integer count=0;
-    // boolean theater_check;
-    // theater_check = (customerID.substring(0,3).equals(this.server_name)? (customerID.substring(0, 3).equals(movieId.substring(0,3) : true) : false))
+//       Integer count=0;
+//       for(String x : user_data.get(customerID).keySet()){
+//           String SubString = x.replace(movieName + "-", "").substring(0, 3);
+//           if (!(customerID.substring(0,3).equals(SubString))){
+//               System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + x + " substring thingi..=--->>" + x.replace(movieName+"-", "").substring(0,3));
+//               count += 1;
+//           }
+//       }
     if(movieId.substring(0,3).equals(this.server_name))  {
-        System.out.println("\n\n Server name----->>>" + server_name + " \n\n");
         if(datastorage.containsKey(movieName)){
-            System.out.println("datastorage in the server----->>" + server_name +  "\nStrg-->" + datastorage);
             if(datastorage.get(movieName).containsKey(movieId)){
-                System.out.println("movieId in the server----->>" + server_name +  "\nStrg-->" + datastorage.get(movieName));
                 if(datastorage.get(movieName).get(movieId) > numberOfTickets){
                     System.out.println("Tickets in the server----->>" + server_name +  "\nStrg-->" + datastorage.get(movieName).get(movieId));
                     datastorage.get(movieName).put(movieId, datastorage.get(movieName).get(movieId) - numberOfTickets);
@@ -198,9 +200,6 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                             LogObj.logger.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
 
                             return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
-                            // if (customerID.substring(0, 3) == movieId.substring(0, 3)){
-                                // // TO-DO something with that same region thing...!!!
-                                // }
                         }else{
                             // add data to the existing cutomer id in hashmap
                             user_data.get(customerID).put(movie_string, numberOfTickets);
@@ -232,25 +231,18 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     }else{
     // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
         methodsList = "bookMovieTickets" + "<>" + movieName + "<>" + movieId + "<>" + customerID + "<>" + numberOfTickets;
-        for(String x : user_data.get(customerID).keySet()){
-            String substring = x.replace(movieName + "-", "").substring(0, 3);
-            if (!(customerID.substring(0,3).equals(substring))){
-                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + x + " substring thingi..=--->>" + x.replace(movieName+"-", "").substring(0,3));
-                count += 1;
-            }
+        if(movieId.substring(0, 3).equals("VER") && !(movieId.substring(0,3).equals(this.server_name))){
+            sBuilder.append(sending_message(methodsList, "VER", 8002));
+        }else if(movieId.substring(0, 3).equals("OUT") && !(movieId.substring(0,3).equals(this.server_name))){
+            sBuilder.append(sending_message(methodsList, "OUT", 8003));
+        }else if(movieId.substring(0, 3).equals("ATW") && !(movieId.substring(0,3).equals(this.server_name))){
+            sBuilder.append(sending_message(methodsList, "ATW", 8001));
         }
-        if(count<=3){
-            if(movieId.substring(0, 3).equals("VER") && !(movieId.substring(0,3).equals(this.server_name))){
-                sBuilder.append(sending_message(methodsList, "VER", 8002));
-            }else if(movieId.substring(0, 3).equals("OUT") && !(movieId.substring(0,3).equals(this.server_name))){
-                sBuilder.append(sending_message(methodsList, "OUT", 8003));
-            }else if(movieId.substring(0, 3).equals("ATW") && !(movieId.substring(0,3).equals(this.server_name))){
-                sBuilder.append(sending_message(methodsList, "ATW", 8001));
-            }
-            return sBuilder.toString();
-        }else{
-            return "Customer with the id " + customerID + " has exceeded the limit of booking in other area.";
-        }
+        return sBuilder.toString();
+//        if(count<=3){
+//        }else{
+//            return "Customer with the id " + customerID + " has exceeded the limit of booking in other area.";
+//        }
     
    }
 }
@@ -289,32 +281,44 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
    @Override
-   public String cancelMovieTickets(String customerID, String movieID, String movieName, Integer numberOfTickets){
+   public String cancelMovieTickets(String customerID, String movieID, String movieName, Integer numberOfTickets) throws RemoteException {
        LogObj = new Log(server_name);
        if (movieID.substring(0,3).equals(this.server_name)){
-
+           if(user_data.containsKey(customerID)){
+               String movie_string = movieName + "-" + movieID;
+               if(user_data.get(customerID).containsKey(movie_string)){
+                   if(user_data.get(customerID).get(movie_string) > numberOfTickets){
+                       user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) - numberOfTickets);
+                       datastorage.get(movieName).put(movieID, datastorage.get(movieName).get(movieID) + numberOfTickets);
+                       System.out.println(user_data.get(customerID).get(movie_string) + " IF---Here is the user data " + "\n------>>" + "\n...custome id"+user_data.get(customerID)+"\n ehole user data" + user_data);
+                       return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
+                   }else if((user_data.get(customerID).get(movie_string).equals(numberOfTickets))){
+                       datastorage.get(movieName).put(movieID, datastorage.get(movieName).get(movieID) + numberOfTickets);
+                       user_data.get(customerID).remove(movie_string, user_data.get(customerID).get(movie_string));
+                       System.out.println(user_data.get(customerID).get(movie_string) + " ELSE Here is the user data " + "\n------>>" + "\n...custome id"+user_data.get(customerID)+"\n ehole user data" + user_data);
+                       return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
+                   }else{
+                       return "Please enter valid ticket number to be removed!!";
+                   }
+               }else{
+                   return "No movie found with the movieID- " + movieID;
+               }
+           }else{
+               return "There is no userdata found with the id " + customerID;
+           }
+       }else {
+           StringBuilder sBuilder = new StringBuilder();
+           // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
+           String methodsList = "cancelMovieTickets" + "<>" + movieName + "<>" + movieID + "<>" + customerID + "<>" + numberOfTickets;
+           if(movieID.substring(0, 3).equals("VER") && !(movieID.substring(0,3).equals(this.server_name))){
+               sBuilder.append(sending_message(methodsList, "VER", 8002));
+           }else if(movieID.substring(0, 3).equals("OUT") && !(movieID.substring(0,3).equals(this.server_name))){
+               sBuilder.append(sending_message(methodsList, "OUT", 8003));
+           }else if(movieID.substring(0, 3).equals("ATW") && !(movieID.substring(0,3).equals(this.server_name))){
+               sBuilder.append(sending_message(methodsList, "ATW", 8001));
+           }
+           return sBuilder.toString();
        }
-        if(user_data.containsKey(customerID)){
-            String movie_string = movieName + "-" + movieID;
-            if(user_data.get(customerID).containsKey(movie_string)){
-                if(user_data.get(customerID).get(movie_string) >= numberOfTickets){
-                    user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) - numberOfTickets);
-                    datastorage.get(movieName).put(movieID, datastorage.get(movieName).get(movieID) + numberOfTickets);
-                    System.out.println(user_data.get(customerID).get(movie_string) + " IF---Here is the user data " + "\n------>>" + "\n...custome id"+user_data.get(customerID)+"\n ehole user data" + user_data);
-                    return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
-                }else{
-                    datastorage.get(movieName).put(movieID, user_data.get(customerID).get(movieID));
-                    user_data.get(customerID).remove(movie_string);
-                    user_data.get(customerID).remove(movie_string, user_data.get(customerID).get(movie_string));
-                    System.out.println(user_data.get(customerID).get(movie_string) + " ELSE Here is the user data " + "\n------>>" + "\n...custome id"+user_data.get(customerID)+"\n ehole user data" + user_data);
-                    return numberOfTickets + " Movie tickets for " + movieName + " has been removed";
-                }
-            }else{
-                return "No movie found with the movieID- " + movieID;
-            }
-        }else{
-            return "There is no userdata found with the id " + customerID;
-    }
    }
 
     public String UDPcall(String methodsList) throws RemoteException{

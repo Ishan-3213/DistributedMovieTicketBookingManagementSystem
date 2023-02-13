@@ -1,7 +1,6 @@
 package Client;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
@@ -13,7 +12,7 @@ public class Client {
     static Integer RMIPortNumber;
     static Log LogObj;
     public static void main(String[] args) {
-        try (Scanner read = new Scanner(System.in);){
+        try (Scanner read = new Scanner(System.in)){
             System.out.println("\nPlease enter your UserID: ");
             user_id = (read.nextLine()).toUpperCase();
             while(user_id.isBlank() | user_id.length()!=8 ){
@@ -21,43 +20,48 @@ public class Client {
                 user_id = (read.nextLine()).toUpperCase();
             }
             System.out.println(user_id);
-            if (user_id.substring(0,3).equals("ATW")){
-                RMIPortNumber = 8001;
-            }else if(user_id.substring(0,3).equals("VER")) {
-                RMIPortNumber = 8002;
-            } else if (user_id.substring(0,3).equals("OUT")){
-                RMIPortNumber = 8003;
-            }
-            else {
-                System.out.println("Didn't find the server");
+            while(true){
+                if (user_id.startsWith("ATW")){
+                    RMIPortNumber = 8001;
+                    break;
+                }else if (user_id.startsWith("VER")){
+                    RMIPortNumber = 8002;
+                    break;
+                } else if (user_id.startsWith("OUT")) {
+                    RMIPortNumber = 8003;
+                    break;
+                }else {
+                    System.out.println("\nPlease enter valid UserId !!");
+                    user_id = (read.nextLine()).toUpperCase();
+                }
             }
             Registry registry = LocateRegistry.getRegistry(RMIPortNumber);
             InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
             LogObj = new Log(user_id);
             AvailableOptions(intOpr, user_id);
         }catch (Exception e) {
-           System.err.println("Server exception: " + e.toString());
+           System.err.println("Server exception: " + e);
            e.printStackTrace();
         }
     }
-    public static String AvailableOptions(InterfaceOperations intOpr, String user_id) throws RemoteException{
-        Integer user_choice;
+    public static void AvailableOptions(InterfaceOperations intOpr, String user_id) {
+        int user_choice;
         boolean is_admin;
         String movieName;
         String movieID;
-        Integer capacity;
+        int capacity;
         boolean login = true;
-        boolean choice = false;
+        boolean choice;
         // List<String> movieList = Arrays.asList("AVATAR", "AVENGER", "TITANIC");
-        try (Scanner read = new Scanner(System.in);){
+        try (Scanner read = new Scanner(System.in)){
 
         while(login){
 
-            is_admin = user_id.substring(0,4).endsWith("A") ? (!user_id.substring(0,4).endsWith("C") ? true : false) : false;
+            is_admin = user_id.substring(0, 4).endsWith("A") && (!user_id.substring(0, 4).endsWith("C"));
             choice = true;
             // Customer Options CLI
             if(!is_admin){
-                LogObj.logger.info("Client has been logged with ID: ");
+                LogObj.logger.info("Client has been logged with ID: " + user_id);
                 System.out.println();
                 System.out.println("\t Hey there Customer - " + user_id);
                 while (choice) {
@@ -77,6 +81,7 @@ public class Client {
                         String movie_shows =intOpr.listMovieShowsAvailability(movieName);
                         if(movie_shows.isEmpty()){
                             System.out.println("Sorry there is no show available for " + movieName);
+                            break;
                         }
                         else{
                             System.out.println();
@@ -96,17 +101,11 @@ public class Client {
                         break;
                     case 2:
                         System.out.println();
-                        // System.out.println("Enter UserId: ");
-                        // String userId_booking = (read.nextLine()).toUpperCase();
-                        // while(userId_booking.isBlank() | userId_booking.length()!=8){
-                            // System.out.println("Please enter valid UserId !!");
-                            // userId_booking = (read.nextLine()).toUpperCase();
-                        // }
                         String booking_schedule = intOpr.getBookingSchedule(user_id);
                         if (booking_schedule.isEmpty() | booking_schedule.isBlank()){
                             System.out.println("There is no booked movie tickets found with the ID - " + user_id);
                         }else{
-                            System.out.println("Here is your booking schedule..!!");
+                            System.out.println("Here is your booking schedule..!!\n");
                             System.out.println(booking_schedule);
                             LogObj.logger.info(user_id + "'s booking schedule: \n" + booking_schedule);
 
@@ -114,19 +113,18 @@ public class Client {
                         break;
                     case 3:
                         System.out.println();
+
                         System.out.println("Please Enter UserId again: ");
                         String userId_cancel = (read.nextLine()).toUpperCase();
+
                         while(userId_cancel.isBlank() | userId_cancel.length() > 8){
                             System.out.println("Please enter valid UserId !!");
                             userId_cancel = (read.nextLine()).toUpperCase();
                         }
                         while(!user_id.equals(userId_cancel)){
-                            System.out.println("Please enter valid UserId !!");
+                            System.out.println("Unauthorized..!! You are not logged in with the given userID!!");
                             userId_cancel = (read.nextLine()).toUpperCase();
                         }
-                        System.out.println("Enter movie name you want to cancel from the option.");
-                        System.out.println("AVATAR \t AVENGER \t TITANIC");
-                        movieName = (read.nextLine()).toUpperCase();
                         String booked_movie =intOpr.getBookingSchedule(user_id);
                         if(booked_movie.isEmpty()){
                             System.out.println("There is no booked movie tickets found with the ID -" + user_id);
@@ -135,31 +133,25 @@ public class Client {
                         }
                         else{
                             System.out.println();
-                            // booked_movie.get(userId_cancel);
                             System.out.println("Here is the booked shows with the userID - "+user_id);
-                            System.out.println(booked_movie);
-                            // boolean found_movie = true;
-                            // for (String innerKey : booked_movie.keySet()) {
-                            //     String[] split_value = innerKey.split("-");
-                            //     if (split_value[0].equals(movieName)){
-                            //         System.out.println(split_value[1] + "-" + booked_movie.get(innerKey));
-                            //         found_movie = true;
-                            //     }else{
-                            //         System.out.println();
-                            //         System.out.println("No tickets found for " + movieName);
-                            //         found_movie =false;
-                            //         break;
-                            //     }
-                            // }
-                            // if(!found_movie){
-                            //     break;
-                            // }
+                            System.out.println(booked_movie + "\n");
+                        }
+                        System.out.println("Enter movie name you want to cancel from the option.");
+                        System.out.println("AVATAR \t AVENGER \t TITANIC");
+                        movieName = (read.nextLine()).toUpperCase();
+                        if (!booked_movie.contains(movieName)){
+                            System.out.println("You have no show booked for the movie "+ movieName );
+                            break;
                         }
                         System.out.println();
                         System.out.println("Enter the movieId you want to cancel.");
                         movieID = (read.nextLine()).toUpperCase();
+                        if (!booked_movie.contains(movieID)){
+                            System.out.println("You have no show booked for the movieID "+ movieID );
+                            break;
+                        }
                         System.out.println();
-                        System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
+                        System.out.println("\nPlease enter number of tickets for the movie " + movieName + "-" +movieID);
                         capacity = Integer.parseInt(read.nextLine());
                         String reply = intOpr.cancelMovieTickets(user_id, movieID, movieName, capacity);
                         System.out.println(reply);
@@ -179,7 +171,7 @@ public class Client {
             
             // Admin Options CLI
             else if(is_admin){
-                LogObj.logger.info("Admin has looged in with Id: " + user_id);
+                LogObj.logger.info("Admin has logged in with Id: " + user_id);
                 System.out.println();
                 System.out.println("---------------\tHey there Admin("+user_id+") ---------------");
                 while (choice) {
@@ -200,14 +192,10 @@ public class Client {
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
-                            // if(movieList.contains(movieName)){
-                                //     System.out.println("It does contains...!!!!" + movieList);
-                                // }
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
                             if(movieID.substring(0,3).equals(user_id.substring(0,3))){
-
                                 while(movieID.isBlank() | movieID.length()<11 | movieName.isBlank()){
                                     System.out.println("\nPlease enter valid movie details..!!");
                                     System.out.println();
@@ -264,8 +252,6 @@ public class Client {
                                 movieName = (read.nextLine()).toUpperCase();
                             }
                             String movie_shows = intOpr.listMovieShowsAvailability(movieName);
-                            // String [] splitted = movie_shows.split("<>");
-                            // System.out.println("splitted------>>>>>>>>>>" + splitted);
                             if(movie_shows.isEmpty()){
                                 System.out.println();
                                 System.out.println("Sorry there is no show available for-> " + movieName + "\n");
@@ -279,37 +265,38 @@ public class Client {
                             }
                             break;
                         case 4:
-                            choice = false;
-                            login = false;
-                            break;
-                            // System.out.println();
-                            // System.out.println("Enter UserId: ");
-                            // String user_booking_id = (read.nextLine()).toUpperCase();
-                            // while(user_booking_id.isBlank() | user_booking_id.length()!=8){
-                            //     System.out.println("Please enter valid UserId !!");
-                            //     user_booking_id = (read.nextLine()).toUpperCase();
-                            // }
-                            // System.out.println("Enter movie name you want to add from the option.");
-                            // System.out.println("AVATAR \t AVENGER \t TITANIC");
-                            // movieName = (read.nextLine()).toUpperCase();
-                            // HashMap<String, Integer> list_movie_shows =intOpr.listMovieShowsAvailability(movieName);
-                            // if(list_movie_shows.isEmpty()){
-                            //     System.out.println("Sorry there is no show available for " + movieName);
-                            // }
-                            // else{
-                            //     System.out.println("Here is the movie shows available for "+movieName);
-                            //     System.out.println(list_movie_shows);
-                            // }
-                            // System.out.println();
-                            // System.out.println("Enter the movieId you want to book.");
-                            // movieID = (read.nextLine()).toUpperCase();
-    
-                            // System.out.println();
-                            // System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
-                            // capacity = Integer.parseInt(read.nextLine());
-                            // String reply = intOpr.bookMovieTickets(user_booking_id, movieID, movieName, capacity);
-                            // System.out.println(reply);
-                            // break;
+                             System.out.println();
+                             System.out.println("Enter UserId: ");
+                             String user_booking_id = (read.nextLine()).toUpperCase();
+                             while(user_booking_id.isBlank() | user_booking_id.length()!=8){
+                                 System.out.println("Please enter valid UserId !!");
+                                 user_booking_id = (read.nextLine()).toUpperCase();
+                             }
+                            LogObj.logger.info(user_id + " wants to book movie.");
+                            System.out.println("Enter movie name you want to add from the option.");
+                            System.out.println("AVATAR \t AVENGER \t TITANIC");
+                            movieName = (read.nextLine()).toUpperCase();
+                            String available_movie_shows =intOpr.listMovieShowsAvailability(movieName);
+                            if(available_movie_shows.isEmpty()){
+                                System.out.println("Sorry there is no show available for " + movieName);
+                                break;
+                            }
+                            else{
+                                System.out.println();
+                                System.out.println("Here is the movie shows available for the "+movieName);
+                                System.out.println(available_movie_shows.replace("<>", "-"));
+                            }
+                            System.out.println();
+                            System.out.println("Enter the movieId you want to book.");
+                            movieID = (read.nextLine()).toUpperCase();
+
+                            System.out.println();
+                            System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
+                            capacity = Integer.parseInt(read.nextLine());
+                            String received_data = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
+                            System.out.println(received_data);
+                            LogObj.logger.info(received_data);
+                             break;
                         case 5:
                             System.out.println();
                             System.out.println("Enter UserId: ");
@@ -326,57 +313,8 @@ public class Client {
                             System.out.println(booking_schedule);
                             }
                             break;
-                        case 6:
+                        case 6,7:
                             System.out.println("Logging out from the - " + user_id);
-                            choice = false;
-                            login = false;
-                            break;
-                            // System.out.println();
-                            // System.out.println("Enter UserId: ");
-                            // String userId_cancel = (read.nextLine()).toUpperCase();
-                            // while(userId_cancel.isBlank() | userId_cancel.length() > 8){
-                            //     System.out.println("Please enter valid UserId !!");
-                            //     userId_cancel = (read.nextLine()).toUpperCase();
-                            // }
-                            // System.out.println("-------" + user_id + "<----->" + userId_cancel);
-                            // while(user_id == userId_cancel){
-                            //     System.out.println("User id didn't match .. !!");
-                            //     userId_cancel = (read.nextLine()).toUpperCase();
-                            // }
-                            // System.out.println("Enter movie name you want to cancel from the option.");
-                            // System.out.println("AVATAR \t AVENGER \t TITANIC");
-                            // movieName = (read.nextLine()).toUpperCase();
-                            // HashMap<String, Integer> booked_movie =intOpr.getBookingSchedule(userId_cancel);
-                            // if(booked_movie.isEmpty()){
-                            //     System.out.println("There is no booked movie tickets found with the ID -" + user_id);
-                            //     break;
-                            // }
-                            // else{
-                            //     System.out.println();
-                            //     booked_movie.get(userId_cancel);
-                            //     System.out.println("Here is the booked shows with the userID - "+user_id);
-                            //     for (String innerKey : booked_movie.keySet()) {
-                            //         String[] split_value = innerKey.split("-");
-                            //         String splited_movie_name = split_value[0];
-                            //         if (splited_movie_name.trim().equals(movieName)){
-                            //             System.out.println(split_value[1] + " " + booked_movie.get(innerKey));
-                            //         }else{
-                            //             System.out.println();
-                            //             System.out.println(split_value[1] + "/-/" + booked_movie.get(innerKey));
-                            //             System.out.println("No tickets found for " + movieName);
-                            //         }
-                            //     }
-                            // }
-                            // System.out.println();
-                            // System.out.println("Enter the movieId you want to cancel.");
-                            // movieID = (read.nextLine()).toUpperCase();
-                            // System.out.println();
-                            // System.out.println("Number of tickets for the movie " + movieName + "-" +movieID);
-                            // capacity = Integer.parseInt(read.nextLine());
-                            // String data_response = intOpr.cancelMovieTickets(user_id, movieID, movieName, capacity);
-                            // System.out.println(data_response);
-                            // break;
-                        case 7:
                             choice = false;
                             login = false;
                             break;
@@ -388,7 +326,6 @@ public class Client {
                     }
                 }
             }
-        return "Thank you for your time..!!";
     } catch (IOException e) {
             throw new RuntimeException(e);
         }
