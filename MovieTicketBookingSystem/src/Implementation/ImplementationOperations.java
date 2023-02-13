@@ -74,12 +74,12 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         }else if(server_name.equals("OUT")){
 
             booking_hashmap = datastorage.get("AVATAR");
-            booking_hashmap.put("OUTM23022023", 100);
-            booking_hashmap.put("OUTE23022023", 100);
+            booking_hashmap.put("OUTM16022023", 100);
+            booking_hashmap.put("OUTE15022023", 100);
             datastorage.put("AVATAR", booking_hashmap);
 
             booking_hashmap = datastorage.get("AVENGER");
-            booking_hashmap.put("OUTA23022023", 100);
+            booking_hashmap.put("OUTA20022023", 100);
             datastorage.put("AVENGER", booking_hashmap);
 
             user_data.put("OUTC4321", new HashMap<String, Integer>());

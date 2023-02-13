@@ -3,15 +3,20 @@ package Client;
 import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.time.LocalDate;
 import java.util.*;
 import Interface.InterfaceOperations;
 import Logs.Log;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
 
 public class Client {
     static String user_id;
     static Integer RMIPortNumber;
     static Log LogObj;
     public static void main(String[] args) {
+
         try (Scanner read = new Scanner(System.in)){
             System.out.println("\nPlease enter your UserID: ");
             user_id = (read.nextLine()).toUpperCase();
@@ -37,7 +42,6 @@ public class Client {
             }
             Registry registry = LocateRegistry.getRegistry(RMIPortNumber);
             InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
-            LogObj = new Log(user_id);
             AvailableOptions(intOpr, user_id);
         }catch (Exception e) {
            System.err.println("Server exception: " + e);
@@ -52,10 +56,9 @@ public class Client {
         int capacity;
         boolean login = true;
         boolean choice;
-        // List<String> movieList = Arrays.asList("AVATAR", "AVENGER", "TITANIC");
         try (Scanner read = new Scanner(System.in)){
-
-        while(login){
+            LogObj = new Log(user_id);
+            while(login){
 
             is_admin = user_id.substring(0, 4).endsWith("A") && (!user_id.substring(0, 4).endsWith("C"));
             choice = true;
@@ -99,7 +102,11 @@ public class Client {
                             System.out.println("Please enter valid movie-ID\n");
                             break;
                         }
-                        System.out.println();
+                        long days = DaysLeft(movieID);
+                        if (days>7 | days<0) {
+                            System.out.println("Can not book tickets later than 1 week/before today.\n");
+                            break;
+                        }
                         System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
                         try {
                             capacity = Integer.parseInt(read.nextLine());
@@ -179,7 +186,7 @@ public class Client {
                     }
                 }
             }
-            
+
             // Admin Options CLI
             else if(is_admin){
                 LogObj.logger.info("Admin has logged in with Id: " + user_id);
@@ -194,7 +201,7 @@ public class Client {
                     System.out.println("3. List out movie shows available.");
                     System.out.println("4. Book movie tickets.");
                     System.out.println("5. List your booked movie tickets.");
-                    System.out.println("6. Cancel movie tickets. ");    
+                    System.out.println("6. Cancel movie tickets. ");
                     System.out.println("7. Exit");
                     user_choice = Integer.parseInt(read.nextLine());
                     switch (user_choice) {
@@ -210,6 +217,11 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
+                            long days = DaysLeft(movieID);
+                            if (days>30 | days<0) {
+                                System.out.println("Can not add slots later than 1 months/before today.");
+                                break;
+                            }
                             if(movieID.substring(0,3).equals(user_id.substring(0,3))){
                                 while(movieID.isBlank() | movieID.length()<11 | movieName.isBlank()){
                                     System.out.println("\nPlease enter valid movie details..!!");
@@ -240,6 +252,11 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
+                            long remove_day_check = DaysLeft(movieID);
+                            if (remove_day_check>30 | remove_day_check<0) {
+                                System.out.println("Can not remove slots later than 1 months/before today.");
+                                break;
+                            }
                             while(movieID.isBlank() | movieID.length() < 11 | movieName.isBlank() | movieName.isEmpty()){
                                 System.out.println("Please enter valid movie details..!!");
                                 System.out.println();
@@ -304,7 +321,11 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter the movieId you want to book.");
                             movieID = (read.nextLine()).toUpperCase();
-
+                            long days_check = DaysLeft(movieID);
+                            if (days_check>7 | days_check<0) {
+                                System.out.println("Can not book tickets later than 1 week.");
+                                break;
+                            }
                             System.out.println();
                             System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
                             capacity = Integer.parseInt(read.nextLine());
@@ -344,5 +365,14 @@ public class Client {
     } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static long DaysLeft(String MovieID){
+        String movieID = MovieID.substring(4,12);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        LocalDate movie_date = LocalDate.parse(movieID, formatter);
+        LocalDate currentDate = LocalDate.now();
+        long days = ChronoUnit.DAYS.between(currentDate, movie_date);
+        return days;
     }
 }
