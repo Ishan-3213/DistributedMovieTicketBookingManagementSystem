@@ -5,7 +5,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 import Interface.InterfaceOperations;
-import Log.Log;
+import Logs.Log;
 
 public class Client {
     static String user_id;
@@ -78,6 +78,10 @@ public class Client {
                         System.out.println("Enter movie name you want to add from the option.");
                         System.out.println("AVATAR \t AVENGER \t TITANIC");
                         movieName = (read.nextLine()).toUpperCase();
+                        if (movieName.isBlank() | movieName.isEmpty()){
+                            System.out.println("Please enter valid movie-Name\n");
+                            break;
+                        }
                         String movie_shows =intOpr.listMovieShowsAvailability(movieName);
                         if(movie_shows.isEmpty()){
                             System.out.println("Sorry there is no show available for " + movieName);
@@ -91,13 +95,19 @@ public class Client {
                         System.out.println();
                         System.out.println("Enter the movieId you want to book.");
                         movieID = (read.nextLine()).toUpperCase();
-
+                        if (movieID.isBlank() | movieID.isEmpty()){
+                            System.out.println("Please enter valid movie-ID\n");
+                            break;
+                        }
                         System.out.println();
                         System.out.println("Please enter number of tickets for the movie " + movieName + "-" +movieID);
-                        capacity = Integer.parseInt(read.nextLine());
-                        String data = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
-                        System.out.println(data);
-                        LogObj.logger.info(data);
+                        try {
+                            capacity = Integer.parseInt(read.nextLine());
+                            String data = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
+                            System.out.println(data);
+                            LogObj.logger.info(data);
+                            break;
+                            }catch (NumberFormatException e){System.out.println("Please enter valid number!");}
                         break;
                     case 2:
                         System.out.println();
@@ -124,6 +134,7 @@ public class Client {
                         while(!user_id.equals(userId_cancel)){
                             System.out.println("Unauthorized..!! You are not logged in with the given userID!!");
                             userId_cancel = (read.nextLine()).toUpperCase();
+                            break;
                         }
                         String booked_movie =intOpr.getBookingSchedule(user_id);
                         if(booked_movie.isEmpty()){
@@ -192,6 +203,10 @@ public class Client {
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
+                            if (movieName.isBlank() | movieName.isEmpty()){
+                                System.out.println("Please enter valid movie-Name\n");
+                                break;
+                            }
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
@@ -225,7 +240,7 @@ public class Client {
                             System.out.println();
                             System.out.println("Enter movieId for the movie - " + movieName);
                             movieID = (read.nextLine()).toUpperCase();
-                            while(movieID.isBlank() | movieID.length() < 11 | movieName.isBlank()){
+                            while(movieID.isBlank() | movieID.length() < 11 | movieName.isBlank() | movieName.isEmpty()){
                                 System.out.println("Please enter valid movie details..!!");
                                 System.out.println();
                                 System.out.println("Enter movie name you want to add from the option.");
@@ -245,7 +260,7 @@ public class Client {
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("\nAVATAR\nAVENGER\nTITANIC");
                             movieName = (read.nextLine()).toUpperCase();
-                            while(movieName.isBlank()){
+                            while(movieName.isBlank() | movieName.isEmpty()){
                                 System.out.println();
                                 System.out.println("Enter movie name you want to add from the option.");
                                 System.out.println("AVATAR \t AVENGER \t TITANIC");

@@ -1,4 +1,4 @@
-package Log;
+package Logs;
 import java.io.*;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -11,7 +11,7 @@ public class Log {
     public Log(String fname){
         super();
         try {
-            file = new File("D:/Academic/Concordia/Sem-1/DSD/Assignemnt/DMTMS/DistributedMovieTicketBookingManagementSystem/MovieTicketBookingSystem/src/Log/"+ fname + ".txt");
+            file = new File("D:/Academic/Concordia/Sem-1/DSD/Assignemnt/DMTMS/DistributedMovieTicketBookingManagementSystem/MovieTicketBookingSystem/src/Logs/"+ fname + ".log");
             if(!file.exists()){
                 file.createNewFile();
             }

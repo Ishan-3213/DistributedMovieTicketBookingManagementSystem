@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import Interface.InterfaceOperations;
-import Log.Log;
+import Logs.Log;
 
 public class ImplementationOperations extends UnicastRemoteObject implements InterfaceOperations {
     HashMap<String, HashMap<String, Integer>> datastorage;
@@ -175,14 +175,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     StringBuilder sBuilder = new StringBuilder();
     LogObj = new Log(server_name);
 
-//       Integer count=0;
-//       for(String x : user_data.get(customerID).keySet()){
-//           String SubString = x.replace(movieName + "-", "").substring(0, 3);
-//           if (!(customerID.substring(0,3).equals(SubString))){
-//               System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + x + " substring thingi..=--->>" + x.replace(movieName+"-", "").substring(0,3));
-//               count += 1;
-//           }
-//       }
+
     if(movieId.substring(0,3).equals(this.server_name))  {
         if(datastorage.containsKey(movieName)){
             if(datastorage.get(movieName).containsKey(movieId)){
