@@ -9,6 +9,7 @@ import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+import java.util.logging.Logger;
 import Interface.InterfaceOperations;
 import Logs.Log;
 
@@ -18,19 +19,17 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     HashMap<String, Integer> booking_hashmap;
     HashMap<String, Integer> customer_booking_hashmap;
     String server_name;
-    static Log LogObj;
+    Logger LogObj;
 
     // Static Values..!!
 
 
-    public ImplementationOperations(String server_name) throws RemoteException {
+    public ImplementationOperations(String server_name, Logger LogObj) throws RemoteException {
         super();
         this.server_name = server_name;
-
+        this.LogObj = LogObj;
         datastorage = new HashMap<>();
         user_data = new HashMap<>();
-        LogObj = new Log(server_name);
-
         booking_hashmap = new HashMap<String, Integer>();
         customer_booking_hashmap = new HashMap<String, Integer>();
 
@@ -91,7 +90,6 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
     @Override
     public String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) {
-        LogObj = new Log(server_name);
         try {
             if (datastorage.containsKey(movieName)){
                 if (datastorage.get(movieName).containsKey(movieId)) {
@@ -99,12 +97,12 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                     System.out.println();
                     System.out.println("Movie's slot with the ID " + movieId + " has been updated!");
                     System.out.println(datastorage);
-                    LogObj.logger.info("Movie slot updated.");
+                    LogObj.info("Movie slot updated.");
                     return "Movie slot updated.";
                 }else{
                     datastorage.get(movieName).put(movieId, bookingCapacity);
                     System.out.println("Data has been added" + datastorage);
-                    LogObj.logger.info("Movie slot updated.");
+                    LogObj.info("Movie slot updated.");
                     return "Movie slot added.";
                 }
             }else{
@@ -113,7 +111,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                 booking_hashmap.put(movieId, bookingCapacity);
                 datastorage.put(movieName, booking_hashmap);
                 System.out.println("Movie slot has been added..!!" + datastorage);
-                LogObj.logger.info("New Movie slot added.");
+                LogObj.info("New Movie slot added.");
                 return "New movie slot has been added..!!";
             }
         } catch (Exception e) {
@@ -122,30 +120,28 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     }
    @Override
    public String removeMovieSlots(String movieId, String movieName) {
-       LogObj = new Log(server_name);
        if(datastorage.containsKey(movieName)){
-       if (datastorage.get(movieName).containsKey(movieId)){
-           datastorage.get(movieName).remove(movieId, datastorage.get(movieName).get(movieId));
-           System.out.println();
-           System.out.println(datastorage.get(movieName) +" after removal..!! ");
-           LogObj.logger.info("Movie slot for " + movieName + " has been removed");
-           return "Movie slot for " + movieName + " has been removed";
-       }else {
-        System.out.println("there is no movie slot for this movie..!!!");
-           LogObj.logger.info("No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region");
+           if (datastorage.get(movieName).containsKey(movieId)){
+               datastorage.get(movieName).remove(movieId, datastorage.get(movieName).get(movieId));
+               System.out.println();
+               System.out.println(datastorage.get(movieName) +" after removal..!! ");
+               LogObj.info("Movie slot for " + movieName + " has been removed");
+               return "Movie slot for " + movieName + " has been removed";
+           }else {
+            System.out.println("there is no movie slot for this movie..!!!");
+               LogObj.info("No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region");
+            return "No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region";
+           }
+       }else{
+        LogObj.info("No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region");
         return "No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region";
-       }
-    }else{
-        LogObj.logger.info("No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region");
-        return "No movie slot found for the movie " + movieName + " at " + movieId.substring(0, 3) + " region";
+        }
     }
-   }
-
 
 //
    @Override
    public String listMovieShowsAvailability(String movieName) throws RemoteException {
-       LogObj = new Log(server_name);
+
 
        StringBuilder sBuilder = new StringBuilder();
        if (datastorage.containsKey(movieName)){
@@ -162,7 +158,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                    }
                 }
             }
-           LogObj.logger.info("List of movie shows has been shown.");
+           LogObj.info("List of movie shows has been shown.");
            return sBuilder.toString().replace(movieName + "<>", "");
         }else{
         return "No movie slot found for the movie " + movieName;
@@ -173,8 +169,6 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) throws RemoteException {
     String methodsList;
     StringBuilder sBuilder = new StringBuilder();
-    LogObj = new Log(server_name);
-
 
     if(movieId.substring(0,3).equals(this.server_name))  {
         if(datastorage.containsKey(movieName)){
@@ -190,14 +184,14 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                         if (user_data.get(customerID).containsKey(movie_string) ){
                             user_data.get(customerID).put(movie_string, user_data.get(customerID).get(movie_string) + numberOfTickets);
                             System.out.println(user_data.get(customerID) + " --Already booked tickets for the same movie id-- " + customer_booking_hashmap);
-                            LogObj.logger.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
+                            LogObj.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
 
                             return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
                         }else{
                             // add data to the existing cutomer id in hashmap
                             user_data.get(customerID).put(movie_string, numberOfTickets);
                             System.out.println("Customer-ID --->>"+ customerID + " ---" + user_data.get(customerID) + " --Tickets added -- " + customer_booking_hashmap);
-                            LogObj.logger.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
+                            LogObj.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
                             return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
                         }
                     }else{
@@ -207,19 +201,19 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                         customer_booking_hashmap.put(movie_string, numberOfTickets);
                         user_data.put(customerID, customer_booking_hashmap);
                         System.out.println(user_data.get(customerID) + " --New User-- " + user_data);
-                        LogObj.logger.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
+                        LogObj.info(numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId);
                         return numberOfTickets + " tickets booked for the movie " + movieName + "-" + movieId;
                     }
                 }else{
-                    LogObj.logger.info(numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId);
+                    LogObj.info(numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId);
                 return numberOfTickets + " Seats are not available for the " + movieName + " - " + movieId;
                 }
             }else{
-                LogObj.logger.info("No movie found with the ID" + movieId);
+                LogObj.info("No movie found with the ID" + movieId);
                 return "No movie found with the ID" + movieId;
             }
         }
-        LogObj.logger.info("No movie found with the namw" + movieName);
+        LogObj.info("No movie found with the namw" + movieName);
         return "No movie found with the name " + movieName;
     }else{
     // method + "<>" + movie_name + "<>" + movie_id + "<>" + customer_id + "<>" + tickets
@@ -242,7 +236,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
    @Override
    public String getBookingSchedule(String customerID) throws RemoteException{
-       LogObj = new Log(server_name);
+
        StringBuilder sBuilder = new StringBuilder();
         if (this.user_data.containsKey(customerID)){
             for (String x: this.user_data.keySet()){
@@ -275,7 +269,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
    @Override
    public String cancelMovieTickets(String customerID, String movieID, String movieName, Integer numberOfTickets) throws RemoteException {
-       LogObj = new Log(server_name);
+
        if (movieID.substring(0,3).equals(this.server_name)){
            if(user_data.containsKey(customerID)){
                String movie_string = movieName + "-" + movieID;
@@ -315,7 +309,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
     public String UDPcall(String methodsList) throws RemoteException{
-        LogObj = new Log(server_name);
+
 
         StringBuilder sb = new StringBuilder();
     if(this.server_name.equals("ATW")) {
@@ -348,7 +342,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
    public String sending_message(String method_name , String server_name, Integer PortNumber) throws RemoteException{
     // args give message contents and destination hostname
-       LogObj = new Log(server_name);
+
 
        DatagramSocket datasocket = null;
     try{

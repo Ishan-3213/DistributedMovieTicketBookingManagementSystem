@@ -7,16 +7,16 @@ import java.time.LocalDate;
 import java.util.*;
 import Interface.InterfaceOperations;
 import Logs.Log;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Client {
     static String user_id;
     static Integer RMIPortNumber;
-    static Log LogObj;
     public static void main(String[] args) {
-
+        Log logger;
         try (Scanner read = new Scanner(System.in)){
             System.out.println("\nPlease enter your UserID: ");
             user_id = (read.nextLine()).toUpperCase();
@@ -40,15 +40,18 @@ public class Client {
                     user_id = (read.nextLine()).toUpperCase();
                 }
             }
+            Logger LogObj = Logger.getLogger(user_id.substring(0,3));
+            logger = new Log(user_id, true, false);
+            LogObj = logger.attachFileHandlerToLogger(LogObj);
             Registry registry = LocateRegistry.getRegistry(RMIPortNumber);
             InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
-            AvailableOptions(intOpr, user_id);
+            AvailableOptions(intOpr, user_id, LogObj);
         }catch (Exception e) {
            System.err.println("Server exception: " + e);
            e.printStackTrace();
         }
     }
-    public static void AvailableOptions(InterfaceOperations intOpr, String user_id) {
+    public static void AvailableOptions(InterfaceOperations intOpr, String user_id, Logger LogObj) {
         int user_choice;
         boolean is_admin;
         String movieName;
@@ -57,14 +60,13 @@ public class Client {
         boolean login = true;
         boolean choice;
         try (Scanner read = new Scanner(System.in)){
-            LogObj = new Log(user_id);
             while(login){
 
             is_admin = user_id.substring(0, 4).endsWith("A") && (!user_id.substring(0, 4).endsWith("C"));
             choice = true;
             // Customer Options CLI
             if(!is_admin){
-                LogObj.logger.info("Client has been logged with ID: " + user_id);
+                LogObj.info("Client has been logged with ID: " + user_id);
                 System.out.println();
                 System.out.println("\t Hey there Customer - " + user_id);
                 while (choice) {
@@ -77,7 +79,7 @@ public class Client {
                 user_choice = Integer.parseInt(read.nextLine()) ;
                 switch (user_choice) {
                     case 1:
-                        LogObj.logger.info(user_id + " wants to book movie.");
+                        LogObj.info(user_id + " wants to book movie.");
                         System.out.println("Enter movie name you want to add from the option.");
                         System.out.println("AVATAR \t AVENGER \t TITANIC");
                         movieName = (read.nextLine()).toUpperCase();
@@ -112,7 +114,7 @@ public class Client {
                             capacity = Integer.parseInt(read.nextLine());
                             String data = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
                             System.out.println(data);
-                            LogObj.logger.info(data);
+                            LogObj.info(data);
                             break;
                             }catch (NumberFormatException e){System.out.println("Please enter valid number!");}
                         break;
@@ -124,7 +126,7 @@ public class Client {
                         }else{
                             System.out.println("Here is your booking schedule..!!\n");
                             System.out.println(booking_schedule);
-                            LogObj.logger.info(user_id + "'s booking schedule: \n" + booking_schedule);
+                            LogObj.info(user_id + "'s booking schedule: \n" + booking_schedule);
 
                         }
                         break;
@@ -146,7 +148,7 @@ public class Client {
                         String booked_movie =intOpr.getBookingSchedule(user_id);
                         if(booked_movie.isEmpty()){
                             System.out.println("There is no booked movie tickets found with the ID -" + user_id);
-                            LogObj.logger.info(user_id + " has no booked movie tickets.");
+                            LogObj.info(user_id + " has no booked movie tickets.");
                             break;
                         }
                         else{
@@ -173,7 +175,7 @@ public class Client {
                         capacity = Integer.parseInt(read.nextLine());
                         String reply = intOpr.cancelMovieTickets(user_id, movieID, movieName, capacity);
                         System.out.println(reply);
-                        LogObj.logger.info(reply);
+                        LogObj.info(reply);
                         break;
                     case 4:
                         choice = false;
@@ -189,7 +191,7 @@ public class Client {
 
             // Admin Options CLI
             else if(is_admin){
-                LogObj.logger.info("Admin has logged in with Id: " + user_id);
+                LogObj.info("Admin has logged in with Id: " + user_id);
                 System.out.println();
                 System.out.println("---------------\tHey there Admin("+user_id+") ---------------");
                 while (choice) {
@@ -201,12 +203,12 @@ public class Client {
                     System.out.println("3. List out movie shows available.");
                     System.out.println("4. Book movie tickets.");
                     System.out.println("5. List your booked movie tickets.");
-                    System.out.println("6. Cancel movie tickets. ");
-                    System.out.println("7. Exit");
+                    System.out.println("6. Cancel movie tickets / Exit. ");
+//                    System.out.println("7. ");
                     user_choice = Integer.parseInt(read.nextLine());
                     switch (user_choice) {
                         case 1:
-                            LogObj.logger.info("Admin wants to add movie slots.");
+                            LogObj.info("Admin wants to add movie slots.");
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
@@ -238,11 +240,11 @@ public class Client {
                                 capacity = Integer.parseInt(read.nextLine());
                                 String response = intOpr.addMovieSlots(movieID, movieName, capacity);
                                 System.out.println(response);
-                                LogObj.logger.info(response);
+                                LogObj.info(response);
                                 break;
                             }else{
                                 System.out.println("You have no permission to add movies in region! " + movieID.substring(0,3));
-                                LogObj.logger.info("You have no permission to add movies in region! " + movieID.substring(0,3));
+                                LogObj.info("You have no permission to add movies in region! " + movieID.substring(0,3));
                                 break;
                             }
                         case 2:
@@ -269,10 +271,10 @@ public class Client {
                               }
                             String data = intOpr.removeMovieSlots(movieID, movieName);
                             System.out.println(data);
-                            LogObj.logger.info(data);
+                            LogObj.info(data);
                             break;
                         case 3:
-                            LogObj.logger.info("Admin wants to list movie shows.");
+                            LogObj.info("Admin wants to list movie shows.");
                             System.out.println();
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("\nAVATAR\nAVENGER\nTITANIC");
@@ -287,13 +289,13 @@ public class Client {
                             if(movie_shows.isEmpty()){
                                 System.out.println();
                                 System.out.println("Sorry there is no show available for-> " + movieName + "\n");
-                                LogObj.logger.info("Sorry there is no show available for-> " + movieName);
+                                LogObj.info("Sorry there is no show available for-> " + movieName);
                             }
                             else{
                                 System.out.println();
                                 System.out.println("Here is the movie shows available for the "+movieName);
                                 System.out.println(movie_shows.replace("<>", "-"));
-                                LogObj.logger.info(movie_shows.replace("<>", "-"));
+                                LogObj.info(movie_shows.replace("<>", "-"));
                             }
                             break;
                         case 4:
@@ -304,7 +306,7 @@ public class Client {
                                  System.out.println("Please enter valid UserId !!");
                                  user_booking_id = (read.nextLine()).toUpperCase();
                              }
-                            LogObj.logger.info(user_id + " wants to book movie.");
+                            LogObj.info(user_id + " wants to book movie.");
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");
                             movieName = (read.nextLine()).toUpperCase();
@@ -331,7 +333,7 @@ public class Client {
                             capacity = Integer.parseInt(read.nextLine());
                             String received_data = intOpr.bookMovieTickets(user_id, movieID, movieName, capacity);
                             System.out.println(received_data);
-                            LogObj.logger.info(received_data);
+                            LogObj.info(received_data);
                              break;
                         case 5:
                             System.out.println();
@@ -349,7 +351,8 @@ public class Client {
                             System.out.println(booking_schedule);
                             }
                             break;
-                        case 6,7:
+                        case 6:
+//                        case 7:
                             System.out.println("Logging out from the - " + user_id);
                             choice = false;
                             login = false;

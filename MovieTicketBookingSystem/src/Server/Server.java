@@ -8,21 +8,20 @@ import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Arrays;
+import java.util.logging.Logger;
 
 public class Server {
     Integer RMIPortNum;
     String server_name;
 
-    Server(int RMIPortNum, String server_name) throws RemoteException{
+    Server(int RMIPortNum, String server_name, Logger LogObj) throws RemoteException{
         super();
         try{ 
             this.server_name = server_name;
             this.RMIPortNum = RMIPortNum;
-//            int RMIPortNum = 8001;
             LocateRegistry.getRegistry(RMIPortNum);
             Registry registry = LocateRegistry.createRegistry(RMIPortNum);
-            ImplementationOperations impobj = new ImplementationOperations(server_name);
+            ImplementationOperations impobj = new ImplementationOperations(server_name, LogObj);
             registry.rebind("RegistryTest", impobj);
             System.out.println("Server is started at the PORT- "+ RMIPortNum);
             Runnable task = () -> {serve_listener(impobj);};
@@ -42,7 +41,6 @@ public class Server {
         try {
             datasocket = new DatagramSocket(this.RMIPortNum);
             byte [] buffer = new byte[1024];
-            StringBuilder sb = new StringBuilder();
             System.out.println("server-->>side " + this.server_name +"\n" + "Port ->" + this.RMIPortNum);
 
             while(true){
@@ -50,10 +48,8 @@ public class Server {
                 datasocket.receive(received);
                 
                 String data = new String(buffer, 0, received.getLength());
-                // String data = Arrays.toString(received.getData());
                 String [] splitted = data.split("<>");
                 
-//                ImplementationOperations impobj = new ImplementationOperations(this.server_name);
                 Integer tickets = Integer.parseInt(splitted[4]);
                 customer_id = splitted[3];
                 movie_id = splitted[2];
@@ -103,24 +99,4 @@ public class Server {
         }finally{if(datasocket != null) datasocket.close();}
     }
 }
-
-
-    //     DatagramSocket aSocket = null;
-    //     try{
-    //         aSocket = new DatagramSocket(6789);
-    //                 // create socket at agreed port
-    //         byte[] buffer = new byte[1000];
-    //          while(true){
-    //              DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-    //               aSocket.receive(request);     
-    //             DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), 
-    //                 request.getAddress(), request.getPort());
-    //             aSocket.send(reply);
-    //         }
-    //     }catch (SocketException e){System.out.println("Socket: " + e.getMessage());
-    //     }catch (IOException e) {System.out.println("IO: " + e.getMessage());
-    //     }finally {if(aSocket != null) aSocket.close();}
-    // }
-
-
 
