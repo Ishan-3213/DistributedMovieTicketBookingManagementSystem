@@ -24,10 +24,6 @@ public class Client {
                 System.out.println("\nPlease enter valid UserId !!");
                 user_id = (read.nextLine()).toUpperCase();
             }
-            while(!user_id.substring(0,4).endsWith("A") | !user_id.substring(0,4).endsWith("C")){
-                System.out.println("Please enter valid UserID!");
-                user_id = (read.nextLine()).toUpperCase();
-            }
             while(true){
                 if (user_id.startsWith("ATW")){
                     RMIPortNumber = 8001;
@@ -309,12 +305,6 @@ public class Client {
                             break;
                         case 4:
                              System.out.println();
-                             System.out.println("Enter UserId: ");
-                             String user_booking_id = (read.nextLine()).toUpperCase();
-                             while(user_booking_id.isBlank() | user_booking_id.length()!=8){
-                                 System.out.println("Please enter valid UserId !!");
-                                 user_booking_id = (read.nextLine()).toUpperCase();
-                             }
                             LogObj.info(user_id + " wants to book movie.");
                             System.out.println("Enter movie name you want to add from the option.");
                             System.out.println("AVATAR \t AVENGER \t TITANIC");

@@ -166,6 +166,18 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     String methodsList;
     StringBuilder sBuilder = new StringBuilder();
 
+    if(customerID.substring(0,3).equals(server_name))
+    {
+    }
+    else
+    {
+        if(numberOfTickets >3)
+        {
+            System.out.println("You cannot book more than 3 tickets on other theater");
+            return "You cannot book more than 3 tickets on other theater";
+        }
+    }
+
     if(movieId.substring(0,3).equals(this.server_name))  {
         if(datastorage.containsKey(movieName)){
             if(datastorage.get(movieName).containsKey(movieId)){
@@ -173,7 +185,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
                     System.out.println("Tickets in the server----->>" + server_name +  "\nStrg-->" + datastorage.get(movieName).get(movieId));
                     datastorage.get(movieName).put(movieId, datastorage.get(movieName).get(movieId) - numberOfTickets);
                     System.out.println("\n\n" + " tickets removal done-->> " + datastorage.get(movieName).get(movieId));
-                    // Tickets are available 
+                    // Tickets are available 0
                     String movie_string = movieName + "-" + movieId;
                     if (user_data.containsKey(customerID)){
                         System.out.println("\n\nUSer data in server " + server_name + " data-->" + user_data);
