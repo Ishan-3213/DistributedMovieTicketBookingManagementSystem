@@ -24,7 +24,10 @@ public class Client {
                 System.out.println("\nPlease enter valid UserId !!");
                 user_id = (read.nextLine()).toUpperCase();
             }
-            System.out.println(user_id);
+            while(!user_id.substring(0,4).endsWith("A") | !user_id.substring(0,4).endsWith("C")){
+                System.out.println("Please enter valid UserID!");
+                user_id = (read.nextLine()).toUpperCase();
+            }
             while(true){
                 if (user_id.startsWith("ATW")){
                     RMIPortNumber = 8001;
