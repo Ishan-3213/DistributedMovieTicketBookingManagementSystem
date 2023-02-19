@@ -1,0 +1,14 @@
+Feb 13, 2023 4:34:27 PM Implementation.ImplementationOperations bookMovieTickets
+INFO: 30 tickets booked for the movie AVATAR-OUTE15022023
+Feb 13, 2023 5:32:24 PM Server.Server serve_listener
+INFO: Message from the server OUT in booking_schedule at the port 8003
+Feb 13, 2023 5:32:31 PM Server.Server serve_listener
+INFO: Message from the server OUT in list_movie at the port 8003
+Feb 13, 2023 5:32:53 PM Server.Server serve_listener
+INFO: Message from the server OUT in list_movie at the port 8003
+Feb 13, 2023 5:33:03 PM Implementation.ImplementationOperations bookMovieTickets
+INFO: 20 tickets booked for the movie AVENGER-OUTA20022023
+Feb 13, 2023 5:33:03 PM Server.Server serve_listener
+INFO: Message from the server OUT in bookMovieTickets at the port 8003
+Feb 13, 2023 5:33:14 PM Server.Server serve_listener
+INFO: Message from the server OUT in booking_schedule at the port 8003
