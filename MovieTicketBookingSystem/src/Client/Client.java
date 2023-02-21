@@ -5,7 +5,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.time.LocalDate;
 import java.util.*;
-import Interface.InterfaceOperations;
+import InterfaceOperationsApp.*;
 import Logs.Log;
 import java.time.temporal.ChronoUnit;
 import java.time.format.DateTimeFormatter;
@@ -43,14 +43,14 @@ public class Client {
             logger = new Log(user_id, true, false);
             LogObj = logger.attachFileHandlerToLogger(LogObj);
             Registry registry = LocateRegistry.getRegistry(RMIPortNumber);
-            InterfaceOperations intOpr = (InterfaceOperations)registry.lookup("RegistryTest");
+            InterfaceOperationsPOA intOpr = (InterfaceOperationsPOA)registry.lookup("RegistryTest");
             AvailableOptions(intOpr, user_id, LogObj);
         }catch (Exception e) {
            System.err.println("Server exception: " + e);
            e.printStackTrace();
         }
     }
-    public static void AvailableOptions(InterfaceOperations intOpr, String user_id, Logger LogObj) {
+    public static void AvailableOptions(InterfaceOperationsPOA intOpr, String user_id, Logger LogObj) {
         int user_choice;
         boolean is_admin;
         String movieName;
@@ -364,9 +364,7 @@ public class Client {
                     }
                 }
             }
-    } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    }
     }
 
     private static long DaysLeft(String MovieID){

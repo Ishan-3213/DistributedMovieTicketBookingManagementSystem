@@ -1,19 +1,15 @@
 
 package Implementation;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import InterfaceOperationsApp.InterfaceOperationsPOA;
 
-import Interface.InterfaceOperations;
-
-public class ImplementationOperations extends UnicastRemoteObject implements InterfaceOperations {
+public class ImplementationOperations extends InterfaceOperationsPOA {
     HashMap<String, HashMap<String, Integer>> datastorage;
     HashMap<String, HashMap<String, Integer>> user_data;
     HashMap<String, Integer> booking_hashmap;
@@ -21,7 +17,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
     String server_name;
     Logger LogObj;
 
-    public ImplementationOperations(String server_name, Logger LogObj) throws RemoteException {
+    public ImplementationOperations(String server_name, Logger LogObj) {
         super();
         this.server_name = server_name;
         this.LogObj = LogObj;
@@ -85,7 +81,6 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         }
     }
 
-    @Override
     public String addMovieSlots(String movieId, String movieName, Integer bookingCapacity) {
         try {
             if (datastorage.containsKey(movieName)){
@@ -137,7 +132,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 
 //
    @Override
-   public String listMovieShowsAvailability(String movieName) throws RemoteException {
+   public String listMovieShowsAvailability(String movieName)  {
 
 
        StringBuilder sBuilder = new StringBuilder();
@@ -163,7 +158,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
    @Override
-   public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets) throws RemoteException {
+   public String bookMovieTickets(String customerID, String movieId, String movieName, Integer numberOfTickets)  {
     String methodsList;
     StringBuilder sBuilder = new StringBuilder();
 
@@ -239,12 +234,12 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
 //        }else{
 //            return "Customer with the id " + customerID + " has exceeded the limit of booking in other area.";
 //        }
-    
+
    }
 }
 
    @Override
-   public String getBookingSchedule(String customerID) throws RemoteException{
+   public String getBookingSchedule(String customerID) {
 
        StringBuilder sBuilder = new StringBuilder();
         if (this.user_data.containsKey(customerID)){
@@ -277,7 +272,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
    @Override
-   public String cancelMovieTickets(String customerID, String movieID, String movieName, Integer numberOfTickets) throws RemoteException {
+   public String cancelMovieTickets(String customerID, String movieID, String movieName, int numberOfTickets)  {
 
        if (movieID.substring(0,3).equals(this.server_name)){
            if(user_data.containsKey(customerID)){
@@ -317,7 +312,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
        }
    }
 
-    public String UDPcall(String methodsList) throws RemoteException{
+    public String UDPcall(String methodsList) {
 
 
         StringBuilder sb = new StringBuilder();
@@ -334,7 +329,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
         return sb.toString();
    }
-   
+
    public String list_movie(String movie_name){
         StringBuilder sb = new StringBuilder();
        for (String OuterKey : this.datastorage.keySet()) {
@@ -349,7 +344,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
    }
 
 
-   public String sending_message(String method_name , String server_name, Integer PortNumber) throws RemoteException{
+   public String sending_message(String method_name , String server_name, Integer PortNumber) {
     // args give message contents and destination hostname
 
 
@@ -359,7 +354,7 @@ public class ImplementationOperations extends UnicastRemoteObject implements Int
         datasocket = new DatagramSocket();
         byte[] arguments = method_name.getBytes();
         InetAddress host_name = InetAddress.getLocalHost();
-       
+
         DatagramPacket request = new DatagramPacket(arguments, method_name.length(), host_name, PortNumber);
         datasocket.send(request);
 
